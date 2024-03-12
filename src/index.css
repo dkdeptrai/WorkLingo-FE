@@ -3,28 +3,31 @@
 @tailwind utilities;
 
 :root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --background-color: #f0f2f5;
+  --primary-color: #1890ff;
+  --light-blue-color: #c4e1fc;
+  --primary-text-color: #050c26;
+  --secondary-text-color: #606060;
+  --input-border-color: #d9d9d9;
+  --input-border-radius: 2px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #f0f2f5;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --background-color: #f0f2f5;
-  --primary-color: #1890ff;
-  --primary-text-color: #050c26;
-  --input-border-color: #d9d9d9;
-  --input-border-radius: 2px;
+
+  background-color: #f0f2f5;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--primary-color);
   text-decoration: inherit;
 }
 a:hover {
@@ -34,7 +37,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: flex-start;
+  flex-direction: column;
+  /* place-items: flex-start; */
   min-width: 320px;
   min-height: 100vh;
 }
