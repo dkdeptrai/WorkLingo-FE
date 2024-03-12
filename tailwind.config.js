@@ -6,8 +6,10 @@ export default {
       colors: {
         "background-color": "var(--background-color)",
         "primary-color": "var(--primary-color)",
-        "text-color": "var(--primary-text-color)",
+        "primary-text-color": "var(--primary-text-color)",
+        "secondary-text-color": "var(--secondary-text-color)",
         "input-border-color": "var(--input-border-color)",
+        "light-blue-color": "var(--light-blue-color)",
       },
     },
   },
