@@ -10,6 +10,7 @@ export default {
         "secondary-text-color": "var(--secondary-text-color)",
         "input-border-color": "var(--input-border-color)",
         "light-blue-color": "var(--light-blue-color)",
+        "dark-blue-color": "var(--dark-blue-color)",
       },
     },
   },
