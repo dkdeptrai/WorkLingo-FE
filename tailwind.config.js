@@ -11,6 +11,8 @@ export default {
         "input-border-color": "var(--input-border-color)",
         "light-blue-color": "var(--light-blue-color)",
         "dark-blue-color": "var(--dark-blue-color)",
+        "text-padding-color": "var(--text-padding-color)",
+        "white-background-color": "var(--white-background)",
       },
     },
   },

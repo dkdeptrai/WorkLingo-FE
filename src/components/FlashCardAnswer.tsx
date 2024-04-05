@@ -11,7 +11,7 @@ const FlashCardAnswer: React.FC<FlashCardAnswerProps> = ({
 }) => {
   return (
     <div className="h-14 bg-light-blue-color flex flex-row items-center gap-4 rounded-xl">
-      <div className="w-40 border-e-2 border-primary-text-color my-3 px-8">
+      <div className="w-60 border-e-2 border-primary-text-color my-3 px-8">
         {question}
       </div>
 

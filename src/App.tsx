@@ -4,6 +4,7 @@ import Authentication from "./Authentication";
 import LandingPage from "./LandingPage";
 import NavBar from "./components/NavBar";
 import FlashcardLearning from "./FlashcardLearning";
+import TopicsPage from "./TopicsPage";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
         <Routes>
           <Route path="/login" Component={Authentication} />
           <Route path="/" Component={LandingPage} />
-          <Route path="/topics" Component={FlashcardLearning} />
+          <Route path="/topics" Component={TopicsPage} />
+          <Route path="/quiz" Component={FlashcardLearning} />
         </Routes>
       </Router>
       <div className="footer mt-auto justify-self-end text-secondary-text-color">
