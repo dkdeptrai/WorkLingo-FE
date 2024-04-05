@@ -3,6 +3,7 @@ import "./App.css";
 import Authentication from "./Authentication";
 import LandingPage from "./LandingPage";
 import NavBar from "./components/NavBar";
+import HomePage from "./pages/Home/HomePage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         </div>
         <Routes>
           <Route path="/login" Component={Authentication} />
+          <Route path="/homepage" Component={HomePage} />
           <Route path="/" Component={LandingPage} />
         </Routes>
       </Router>
