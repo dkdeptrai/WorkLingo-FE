@@ -4,10 +4,12 @@ import Authentication from "./Authentication";
 import LandingPage from "./LandingPage";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/Home/HomePage";
+import FlashcardLearning from "./FlashcardLearning";
+import TopicsPage from "./TopicsPage";
 
 function App() {
   return (
-    <div className="h-auto flex flex-col">
+    <div className="h-full flex flex-col">
       <Router>
         <div>
           <NavBar />
@@ -16,9 +18,11 @@ function App() {
           <Route path="/login" Component={Authentication} />
           <Route path="/homepage" Component={HomePage} />
           <Route path="/" Component={LandingPage} />
+          <Route path="/topics" Component={TopicsPage} />
+          <Route path="/quiz" Component={FlashcardLearning} />
         </Routes>
       </Router>
-      <div className="footer my-4 justify-self-end text-secondary-text-color">
+      <div className="footer mt-auto justify-self-end text-secondary-text-color">
         WorkWise All Right Reserved,2024
       </div>
     </div>

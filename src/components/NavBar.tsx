@@ -11,7 +11,7 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = ({ className }) => {
   return (
     <nav
-      className={`flex flex-row justify-start items-center p-1 ${className}`}
+      className={`bg-white-background flex flex-row justify-start items-center p-1  ${className}`}
     >
       <div className="justify-self-start items-center flex flex-row gap-4 flex-1">
         <Logo />
