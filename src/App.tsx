@@ -3,8 +3,12 @@ import "./App.css";
 import Authentication from "./Authentication";
 import LandingPage from "./LandingPage";
 import NavBar from "./components/NavBar";
+
+import HomePage from "./pages/Home/HomePage";
+
 import FlashcardLearning from "./FlashcardLearning";
 import TopicsPage from "./TopicsPage";
+
 
 function App() {
   return (
@@ -15,6 +19,7 @@ function App() {
         </div>
         <Routes>
           <Route path="/login" Component={Authentication} />
+          <Route path="/homepage" Component={HomePage} />
           <Route path="/" Component={LandingPage} />
           <Route path="/topics" Component={TopicsPage} />
           <Route path="/quiz" Component={FlashcardLearning} />
