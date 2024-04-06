@@ -5,14 +5,17 @@
 :root {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --background-color: #f0f2f5;
+  --white-background: #f0f2f5;
+  --background-color: #fbfafe;
   --primary-color: #1890ff;
+  --dark-blue-color: #064580;
   --light-blue-color: #c4e1fc;
   --primary-text-color: #050c26;
   --secondary-text-color: #606060;
   --input-border-color: #d9d9d9;
   --input-border-radius: 2px;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --text-padding-color: #fcf0ff;
+  font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

@@ -446,7 +446,7 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
       </div>
-      <div className="banner bg-[#064580] grid grid-cols-1 md:grid-cols-3 text-white mx-12 px-8 py-10 rounded-[14px] place-items-start gap-4 ">
+      <div className="banner bg-dark-blue-color grid grid-cols-1 md:grid-cols-3 text-white mx-12 px-8 py-10 rounded-[14px] place-items-start gap-4 ">
         <div className="text-2xl font-medium flex flex-row items-center text-left gap-2">
           <BannerIcon1 />
           <div className="">1000+ người đi làm có cơ hội việc làm mới</div>
