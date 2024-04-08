@@ -19,6 +19,7 @@
     "react-flickity-component": "^4.0.7",
     "react-quizlet-flashcard": "^3.0.0",
     "react-router-dom": "^6.22.3",
+    "react-star-ratings": "^2.3.0",
     "react-tabs": "^6.0.2",
     "tw-elements": "^2.0.0",
     "vite-plugin-svgr": "^4.2.0",

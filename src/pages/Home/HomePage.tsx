@@ -3,14 +3,25 @@ import Flickity from "react-flickity-component";
 import TopicImage from "../../assets/icons/topics.png";
 import Card from "../../components/Card";
 import "../../flickity.css";
+import SetOfFlashcards from "../../components/SetOfFlashcards";
+import FamousQuoteCard from "../../components/FamousQuoteCard";
 
 const flickityOptions = {
-  initialIndex: 2,
-  wrapAround: true,
-  autoPlay: 5000,
-  pageDots: false,
-  prevNextButtons: false,
+  freeScroll: true,
+  contain: true,
+  draggable: true,
 };
+
+const quote = [
+  {
+    quote: "The only way to do great work is to love what you do.",
+    author: "Steve Jobs",
+  },
+  {
+    quote: "The only way to do great work is to love what you do.",
+    author: "Steve Jobs",
+  },
+]
 const cards = [
   {
     lessonName: "Lesson 1",
@@ -19,6 +30,7 @@ const cards = [
     creatorName: "John Doe",
     creatorAvatar:
       "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    numberOfRating: 100,
   },
   {
     lessonName: "Lesson 2",
@@ -27,6 +39,7 @@ const cards = [
     creatorName: "Jane Doe",
     creatorAvatar:
       "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    numberOfRating: 100,
   },
   {
     lessonName: "Lesson 3",
@@ -35,6 +48,7 @@ const cards = [
     creatorName: "John Smith",
     creatorAvatar:
       "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    numberOfRating: 100,
   },
   {
     lessonName: "Lesson 4",
@@ -43,6 +57,7 @@ const cards = [
     creatorName: "Jane Smith",
     creatorAvatar:
       "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    numberOfRating: 100,
   },
   {
     lessonName: "Lesson 5",
@@ -51,7 +66,42 @@ const cards = [
     creatorName: "John Doe",
     creatorAvatar:
       "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    numberOfRating: 100,
   },
+];
+
+const setOfFlashcards = [
+  {
+    setOfFlashcardsImage:
+      "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    title: "Calculus: Derivatives",
+    description: "Calculus is the mathematical study of continuous change.",
+    numberOfAnswers: 10,
+    author: "John Doe",
+  },
+  {
+    setOfFlashcardsImage:
+      "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    title: "Organic Chemistry: Alkanes",
+    description: "Organic chemistry is the study of the structure",
+    numberOfAnswers: 10,
+    author: "John Doe",
+  },
+  {
+    setOfFlashcardsImage:
+      "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    title: "Physics: Newton's Laws of Motion",
+    description: "Physics is the natural science that studies matter",
+    numberOfAnswers: 10,
+    author: "John Doe",
+  },
+  {
+    setOfFlashcardsImage:
+      "https://salt.tikicdn.com/cache/280x280/ts/product/4f/25/95/a569eb6c41f6fb2b1d42c5433441fb8b.jpg",
+    title: "Calculus: Integrals",
+    description: "Calculus is the mathematical study of continuous change.",
+    numberOfAnswers: 10,
+  }
 ];
 
 const HomePage: React.FC = () => {
@@ -78,6 +128,7 @@ const HomePage: React.FC = () => {
                   rating={card.rating}
                   creatorName={card.creatorName}
                   creatorAvatar={card.creatorAvatar}
+                  numberOfRating={card.numberOfRating}
                 />
               ))}
             </Flickity>
@@ -521,6 +572,7 @@ const HomePage: React.FC = () => {
                   rating={card.rating}
                   creatorName={card.creatorName}
                   creatorAvatar={card.creatorAvatar}
+                  numberOfRating={card.numberOfRating}
                 />
               ))}
             </Flickity>
@@ -528,7 +580,7 @@ const HomePage: React.FC = () => {
           <h6 className="text-2xl font-bold text-black text-left m-3 mt-12">
             Famous memory cards
           </h6>
-          <div className="container px-5 w-auto  w-full">
+          <div className="container px-5 w-auto w-full">
             <Flickity
               className="carousel w-full"
               options={flickityOptions}
@@ -536,14 +588,14 @@ const HomePage: React.FC = () => {
               reloadOnUpdate
               static
             >
-              {cards.map((card, index) => (
-                <Card
+               {setOfFlashcards.map((setOfFlashcard, index) => (
+                <SetOfFlashcards
                   key={index}
-                  lessonName={card.lessonName}
-                  flashcardCount={card.flashcardCount}
-                  rating={card.rating}
-                  creatorName={card.creatorName}
-                  creatorAvatar={card.creatorAvatar}
+                  setOfFlashcardsImage={setOfFlashcard.setOfFlashcardsImage}
+                  title={setOfFlashcard.title}
+                  description={setOfFlashcard.description}
+                  author={setOfFlashcard.author}
+                  numberOfAnswers={setOfFlashcard.numberOfAnswers}
                 />
               ))}
             </Flickity>
@@ -559,14 +611,12 @@ const HomePage: React.FC = () => {
               reloadOnUpdate
               static
             >
-              {cards.map((card, index) => (
-                <Card
+              {quote.map((quote, index) => (
+                <FamousQuoteCard
+                
                   key={index}
-                  lessonName={card.lessonName}
-                  flashcardCount={card.flashcardCount}
-                  rating={card.rating}
-                  creatorName={card.creatorName}
-                  creatorAvatar={card.creatorAvatar}
+                  quote={quote.quote}
+                  author={quote.author}
                 />
               ))}
             </Flickity>
