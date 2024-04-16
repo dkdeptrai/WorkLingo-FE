@@ -8,6 +8,7 @@ import HomePage from "./pages/Home/HomePage";
 
 import FlashcardLearning from "./FlashcardLearning";
 import TopicsPage from "./TopicsPage";
+import Profile from "./pages/Profile/Profile";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" Component={LandingPage} />
           <Route path="/topics" Component={TopicsPage} />
           <Route path="/quiz" Component={FlashcardLearning} />
+          <Route path="/profile" Component={Profile} />
         </Routes>
       </Router>
       <div className="footer mt-auto justify-self-end text-secondary-text-color">
