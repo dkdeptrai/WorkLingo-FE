@@ -5,36 +5,54 @@ import UserIcon from "../assets/icons/user.svg?react";
 import PasswordIcon from "../assets/icons/password.svg?react";
 import GoogleIcon from "../assets/icons/google.svg?react";
 import { Tab, initTWE } from "tw-elements";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 initTWE({ Tab });
 const AuthenticationForm: React.FC = () => {
+  const { setAccessToken } = useAuth();
   const [activeTab, setActiveTab] = useState("SignIn");
-
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { from } = location.state || { from: { pathname: "/" } };
   // login states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // sign up states
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    AuthService.login(email, password).then(
-      () => {
-        console.log("Login successful");
-      },
-      (error) => {
-        console.log("Login failed");
-      }
-    );
+    try {
+      const token = await AuthService.login(email, password);
+      setAccessToken(token!);
+      navigate(from.pathname, { replace: true });
+    } catch (error) {
+      console.error("Login failed", error);
+    }
   };
 
-  const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => {
-    // Implement sign-up logic here
+  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    const token = await AuthService.register(
+      firstName,
+      lastName,
+      email,
+      password
+    );
+    setAccessToken(token!);
+    navigate(from.pathname, { replace: true });
   };
 
   return (
-    <div className="w-full max-w-96">
+    <div className="">
       <ul
         className="mb-5 flex list-none flex-row flex-wrap border-b-0 ps-0"
         role="tablist"
@@ -53,8 +71,9 @@ const AuthenticationForm: React.FC = () => {
             data-twe-nav-active
             role="tab"
             aria-controls="tabs-sign-in"
-            aria-selected="true"
-            onClick={() => setActiveTab("SignIn")}
+            onClick={() => {
+              setActiveTab("SignIn");
+            }}
           >
             Sign In
           </a>
@@ -71,8 +90,9 @@ const AuthenticationForm: React.FC = () => {
             data-twe-target="#tabs-sign-up"
             role="tab"
             aria-controls="tabs-sign-up"
-            aria-selected="false"
-            onClick={() => setActiveTab("SignUp")}
+            onClick={() => {
+              setActiveTab("SignUp");
+            }}
           >
             Sign Up
           </a>
@@ -80,92 +100,122 @@ const AuthenticationForm: React.FC = () => {
       </ul>
 
       <div className="mb-6">
-        <div
-          className="hidden opacity-100 transition-opacity duration-150 ease-linear data-[twe-tab-active]:block"
-          id="tabs-sign-in"
-          role="tabpanel"
-          aria-labelledby="tabs-sign-in-tab"
-          data-twe-tab-active
-        >
-          {/* Form content */}
-          <form onSubmit={handleSignIn} className="flex flex-col gap-y-7">
-            <TextBoxComponent
-              type="text"
-              name="username"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<UserIcon />}
-            />
-            <TextBoxComponent
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<PasswordIcon />}
-            />
-            <div className="flex flex-row gap-2">
-              <input type="checkbox" name="rememberMe" id="rememberMe" />
-              <label htmlFor="rememberMe">Remember Me</label>
-              <a href="#tabs-forgot-password" className="ml-auto">
-                Forgot your password?
-              </a>
-            </div>
+        {activeTab === "SignIn" && (
+          <div
+            className="opacity-100 transition-opacity duration-150 ease-linear w-full"
+            id="tabs-sign-in"
+            role="tabpanel"
+            aria-labelledby="tabs-sign-in-tab"
+          >
+            {/* Form content */}
+            <form onSubmit={handleSignIn} className="flex flex-col gap-y-7">
+              <TextBoxComponent
+                type="text"
+                name="username"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<UserIcon />}
+              />
+              <TextBoxComponent
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<PasswordIcon />}
+              />
+              <div className="flex flex-row gap-2">
+                <input type="checkbox" name="rememberMe" id="rememberMe" />
+                <label htmlFor="rememberMe">Remember Me</label>
+                <a href="#tabs-forgot-password" className="ml-auto">
+                  Forgot your password?
+                </a>
+              </div>
 
-            <button className="bg-primary-color text-white py-2" type="submit">
-              Sign In
-            </button>
-            <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
-              <GoogleIcon />
-              <span>Sign in with Google</span>
-            </div>
-            <div>
-              Don't have an account? <a href="">Sign Up</a>
-            </div>
-          </form>
-        </div>
-        <div
-          className="hidden opacity-0 transition-opacity duration-150 ease-linear data-[twe-tab-active]:block"
-          id="tabs-sign-up"
-          role="tabpanel"
-          aria-labelledby="tabs-sign-up-tab"
-        >
-          {/* Form content */}
-          <form onSubmit={handleSignUp} className="flex flex-col gap-y-7">
-            <TextBoxComponent
-              type="text"
-              name="username"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<UserIcon />}
-            />
-            <TextBoxComponent
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<PasswordIcon />}
-            />
-            <TextBoxComponent
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              icon={<PasswordIcon />}
-            />
-            <button className="bg-primary-color text-white py-2" type="submit">
-              Sign Up
-            </button>
-            <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
-              <GoogleIcon />
-              <span>Sign in with Google</span>
-            </div>
-          </form>
-        </div>
+              <button
+                className="bg-primary-color text-white py-2"
+                type="submit"
+              >
+                Sign In
+              </button>
+              <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
+                <GoogleIcon />
+                <span>Sign in with Google</span>
+              </div>
+              <div>
+                Don't have an account?{" "}
+                <a href="#tabs-sign-up" onClick={() => setActiveTab("SignUp")}>
+                  Sign Up
+                </a>
+              </div>
+            </form>
+          </div>
+        )}
+        {activeTab === "SignUp" && (
+          <div
+            className="opacity-100 transition-opacity duration-150 ease-linear w-full"
+            id="tabs-sign-up"
+            role="tabpanel"
+            aria-labelledby="tabs-sign-up-tab"
+          >
+            {/* Form content */}
+            <form onSubmit={handleSignUp} className="flex flex-col gap-y-7">
+              <div className="flex flex-row gap-4">
+                <TextBoxComponent
+                  type="text"
+                  name="firstname"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  icon={<UserIcon />}
+                />
+                <TextBoxComponent
+                  type="text"
+                  name="lastname"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  icon={<UserIcon />}
+                />
+              </div>
+              <TextBoxComponent
+                type="text"
+                name="username"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<UserIcon />}
+              />
+              <TextBoxComponent
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<PasswordIcon />}
+              />
+              <TextBoxComponent
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                icon={<PasswordIcon />}
+              />
+              <button
+                className="bg-primary-color text-white py-2"
+                type="submit"
+              >
+                Sign Up
+              </button>
+              <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
+                <GoogleIcon />
+                <span>Sign in with Google</span>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
