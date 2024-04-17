@@ -6,7 +6,6 @@ import Authentication from "./pages/Authentication";
 import LandingPage from "./pages/LandingPage";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/Home/HomePage";
-import HomePage from "./pages/Home/HomePage";
 import FlashcardLearning from "./FlashcardLearning";
 import LessonsPage from "./pages/LessonsPage";
 
