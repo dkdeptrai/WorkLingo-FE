@@ -2,12 +2,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Authentication from "./Authentication";
-import LandingPage from "./LandingPage";
+import Authentication from "./pages/Authentication";
+import LandingPage from "./pages/LandingPage";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/Home/HomePage";
 import FlashcardLearning from "./FlashcardLearning";
-import TopicsPage from "./TopicsPage";
+import LessonsPage from "./pages/LessonsPage";
 
 function App() {
   return (
@@ -32,7 +32,15 @@ function App() {
               path="/topics"
               element={
                 <ProtectedRoute>
-                  <TopicsPage />
+                  <LessonsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/topics/:id"
+              element={
+                <ProtectedRoute>
+                  <LessonsPage />
                 </ProtectedRoute>
               }
             />

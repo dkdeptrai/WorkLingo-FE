@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import TopicComponent from "./components/TopicComponent";
+import LessonComponent from "./components/LessonComponent";
 import FavoriteIcon from "./assets/icons/favorite.svg?react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashCardAnswer from "./components/FlashCardAnswer";
@@ -135,7 +135,7 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
       <div className="w-1/4 flex flex-col gap-4 items-start">
         <div className="text-xl font-medium">Other lessons in this topic</div>
         {topic.map((topicItem, index) => (
-          <TopicComponent key={index} topic={topicItem} />
+          <LessonComponent key={index} topic={topicItem} />
         ))}
       </div>
     </div>
