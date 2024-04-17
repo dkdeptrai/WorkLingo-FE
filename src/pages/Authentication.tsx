@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Logo from "./assets/icons/logo.svg?react";
+import Logo from "../assets/icons/logo.svg?react";
 
-import AuthenticationForm from "./components/AuthenticationForm";
+import AuthenticationForm from "../components/AuthenticationForm";
 
 const Authentication: React.FC = () => {
   return (

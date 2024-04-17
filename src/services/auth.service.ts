@@ -16,8 +16,9 @@ class AuthService {
 
       const data = await response.json();
       if (data) {
-        console.log("Login successful", data);
-        localStorage.setItem("access_token", JSON.stringify(data.access_token));
+        console.log("Login successful", data.access_token);
+
+        localStorage.setItem("access_token", data.access_token);
         return localStorage.getItem("access_token");
       }
     } catch (error) {
@@ -62,7 +63,7 @@ class AuthService {
       const data = await response.json();
       if (data) {
         console.log("Registration successful", data);
-        localStorage.setItem("access_token", JSON.stringify(data.access_token));
+        localStorage.setItem("access_token", data.access_token);
         return localStorage.getItem("access_token");
       }
     } catch (error) {

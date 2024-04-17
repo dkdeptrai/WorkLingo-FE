@@ -1,33 +1,55 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   topic: any;
 }
 
-interface Topic {
-  // Define the properties of the Topic object here
-}
-
 const TopicComponent: React.FC<Props> = ({ topic }) => {
-  // Add your component logic here
+  const navigate = useNavigate();
+  const handleClick = () => {
+    console.log("Clicked on topic: ", topic);
+    navigate(`/topics/${topic.id}`);
+  };
   return (
-    <div className="w-full flex flex-col gap-4 items-start font-semibold bg-dark-blue-color p-4 rounded-[16px]">
-      <div className="text-white ">{topic.name}</div>
-      <div className="text-xs w-full flex flex-row justify-between items-center">
-        <div className="bg-white px-[8px] py-[2px] rounded-[200px]">
-          {topic.numberOfCards} Cards
-        </div>
-        <div className="text-white">⭐ 5.0 (100 ratings)</div>
-      </div>
-      <div className="text-xs flex flex-row mt-8 items-center">
-        <img
-          src="https://picsum.photos/200"
-          alt="some pic"
-          className="h-6 w-6 rounded-[50%]"
-        />
-        <div className="text-white ml-2">John Doe</div>
-        <div className="bg-white px-[8px] py-[2px] ml-2 rounded-[200px]">
-          Teacher
+    <div
+      className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden"
+      onClick={handleClick}
+    >
+      <img
+        className="lg:h-48 md:h-36 w-full object-cover object-center"
+        src={topic.imageUrl}
+        alt="blog"
+      />
+      <div className="p-6">
+        <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
+          TOPIC
+        </h2>
+        <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
+          {topic.name}
+        </h1>
+        <p className="leading-relaxed mb-3 h-24 text-wrap truncate">
+          {topic.description}
+        </p>
+        <div className="flex items-center justify-between flex-wrap ">
+          <div className="bg-light-blue-color px-1 py-0.2 rounded-[4px]">
+            {topic.numberOfLessons} Lessons
+          </div>
+          <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">
+            Learn
+            <svg
+              className="w-4 h-4 ml-2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14"></path>
+              <path d="M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
         </div>
       </div>
     </div>

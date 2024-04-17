@@ -28,18 +28,24 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
       setAccessToken(token);
     }
+    setLoading(false);
   }, []);
 
   const value = {
     accessToken,
     setAccessToken,
   };
+
+  if (loading) {
+    return React.createElement("div", null, "Loading...");
+  }
 
   return React.createElement(AuthContext.Provider, { value: value }, children);
 };
