@@ -21,7 +21,7 @@ const quote = [
     quote: "The only way to do great work is to love what you do.",
     author: "Steve Jobs",
   },
-]
+];
 const cards = [
   {
     lessonName: "Lesson 1",
@@ -101,7 +101,7 @@ const setOfFlashcards = [
     title: "Calculus: Integrals",
     description: "Calculus is the mathematical study of continuous change.",
     numberOfAnswers: 10,
-  }
+  },
 ];
 
 const HomePage: React.FC = () => {
@@ -588,7 +588,7 @@ const HomePage: React.FC = () => {
               reloadOnUpdate
               static
             >
-               {setOfFlashcards.map((setOfFlashcard, index) => (
+              {setOfFlashcards.map((setOfFlashcard, index) => (
                 <SetOfFlashcards
                   key={index}
                   setOfFlashcardsImage={setOfFlashcard.setOfFlashcardsImage}
@@ -613,7 +613,6 @@ const HomePage: React.FC = () => {
             >
               {quote.map((quote, index) => (
                 <FamousQuoteCard
-                
                   key={index}
                   quote={quote.quote}
                   author={quote.author}

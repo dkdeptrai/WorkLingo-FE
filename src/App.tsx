@@ -53,24 +53,19 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Router>
         <div className="footer mt-auto justify-self-end text-secondary-text-color self-center">
           WorkWise All Right Reserved,2024
         </div>
-
-        <Routes>
-          <Route path="/login" Component={Authentication} />
-          <Route path="/homepage" Component={HomePage} />
-          <Route path="/" Component={LandingPage} />
-          <Route path="/topics" Component={LessonsPage} />
-          <Route path="/quiz" Component={FlashcardLearning} />
-          <Route path="/profile" Component={Profile} />
-        </Routes>
-      </Router>
-      <div className="footer mt-auto justify-self-end text-secondary-text-color">
-        WorkWise All Right Reserved,2024
-
       </div>
     </AuthProvider>
   );
