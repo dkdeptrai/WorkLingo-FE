@@ -24,9 +24,9 @@ function App() {
             <Route
               path="/homepage"
               element={
-                <ProtectedRoute>
+                // <ProtectedRoute>
                   <HomePage />
-                </ProtectedRoute>
+                // </ProtectedRoute>
               }
             />
             <Route path="/" element={<LandingPage />} />
