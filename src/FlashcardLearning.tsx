@@ -3,11 +3,9 @@ import LessonComponent from "./components/LessonComponent";
 import FavoriteIcon from "./assets/icons/favorite.svg?react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashCardAnswer from "./components/FlashCardAnswer";
-import LessonsService from "./services/lessons.service";
 import { useParams } from "react-router-dom";
 import lessonsService from "./services/lessons.service";
 import topicsService from "./services/topics.service";
-import { errors } from "web3";
 interface FlashcardLearningProps {
   // Define your component props here
 }
@@ -27,6 +25,7 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
 
   const fetchFlashcard = async () => {
     const cards = await lessonsService.getFlashcards(lessonId!);
+    console.log(cards);
     setFlashcards(
       cards.map((card: any) => ({
         id: card.id,

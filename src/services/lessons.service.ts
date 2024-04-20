@@ -12,7 +12,6 @@ class LessonsService {
         },
       });
       const data = await response.json();
-      console.log("Flashcards: ", data);
       return data;
     } catch (error) {
       console.error("Error fetching flashcards: ", error);
@@ -44,7 +43,8 @@ class LessonsService {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      const data = await response.json(); // Await the response.json() method
+      const data = await response.json();
+      console.log("Lesson: ", data);
       return data;
     } catch (error) {
       console.error("Error fetching lesson: ", error);
