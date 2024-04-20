@@ -83,13 +83,21 @@ const CreateLessonPage: React.FC<Props> = () => {
       setFlashcards(updatedFlashcards);
       console.log("setFlashcards is called");
     } else {
-      console.log("Publishing lesson...");
-      await lessonsService.createNewLesson(
-        topicId!,
-        lessonName,
-        privacy,
-        flashcards
-      );
+      try {
+        await lessonsService.createNewLesson(
+          topicId!,
+          lessonName,
+          privacy,
+          flashcards
+        );
+        setFlashcards([]);
+        setLessonName("Untitled Lesson");
+        setCurrentRenderIndex(0);
+        setPrivacy("Private");
+        alert("Lesson created successfully");
+      } catch (error) {
+        alert(`Error creating lesson ${error}`);
+      }
     }
   };
 
