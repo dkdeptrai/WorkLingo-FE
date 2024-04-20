@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LessonComponent from "../components/LessonComponent";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import LessonsService from "../services/lessons.service";
 import topicsService from "../services/topics.service";
 
@@ -18,16 +18,20 @@ interface Topic {
 
 const LessonsPage: React.FC<TopicsPageProps> = () => {
   // Add your component logic here
+  const navigate = useNavigate();
 
   const topicId = useParams<{ id: string }>().id;
 
   const [lessons, setLessons] = useState([]);
   const [topic, setTopic] = useState<Topic | null>(null);
 
+  const handleCreateLesson = () => {
+    navigate(`/lessons/create?topicId=${topicId}`);
+  };
+
   const fetchLessons = async () => {
-    const lessonService = new LessonsService(topicId!);
     try {
-      setLessons(await lessonService.getLessons(0, 10));
+      setLessons(await topicsService.getLessonsInTopic(topicId!, 0, 10));
     } catch (error) {
       console.error("Error fetching lessons: ", error);
       throw error;
@@ -69,9 +73,17 @@ const LessonsPage: React.FC<TopicsPageProps> = () => {
           ></div>
           {topic?.name}
         </div>
-        <div>
+        <div className="flex flex-row justify-between">
           <div className="text-3xl font-semibold text-start">
             {topic?.numberOfLessons} Lessons
+          </div>
+          <div>
+            <button
+              className="bg-transparent px-3 py-1 border-2 border-primary-color rounded-[2px] text-primary-color"
+              onClick={handleCreateLesson}
+            >
+              Create your lesson
+            </button>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -36,6 +36,26 @@ class TopicsService {
       throw error;
     }
   }
+
+  async getLessonsInTopic(topicId: string, page: number, pageSize: number) {
+    try {
+      const response = await fetch(
+        `${API_URL}/${topicId}/lessons?page=${page}&size=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      return data.results;
+    } catch (error) {
+      console.error("Error fetching lessons in topic: ", error);
+      throw error;
+    }
+  }
 }
 
 export default new TopicsService();

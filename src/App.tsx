@@ -9,6 +9,7 @@ import HomePage from "./pages/Home/HomePage";
 import FlashcardLearning from "./FlashcardLearning";
 import LessonsPage from "./pages/LessonsPage";
 import Profile from "./pages/Profile/Profile";
+import CreateLessonPage from "./pages/CreateLessonPage";
 
 function App() {
   return (
@@ -46,10 +47,18 @@ function App() {
               }
             />
             <Route
-              path="/quiz"
+              path="/lessons/:id"
               element={
                 <ProtectedRoute>
                   <FlashcardLearning />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/lessons/create"
+              element={
+                <ProtectedRoute>
+                  <CreateLessonPage />
                 </ProtectedRoute>
               }
             />

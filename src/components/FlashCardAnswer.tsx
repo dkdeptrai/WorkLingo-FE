@@ -10,12 +10,12 @@ const FlashCardAnswer: React.FC<FlashCardAnswerProps> = ({
   answer,
 }) => {
   return (
-    <div className="h-14 bg-light-blue-color flex flex-row items-center gap-4 rounded-xl">
-      <div className="w-60 border-e-2 border-primary-text-color my-3 px-8">
+    <div className="grid grid-cols-4 gap-4 h-14 bg-light-blue-color items-center gap-4 rounded-xl">
+      <div className="col-span-1 border-e-2 border-primary-text-color px-8 font-semibold">
         {question}
       </div>
 
-      <p className="">{answer}</p>
+      <p className="col-span-3 text-wrap text-ellipsis">{answer}</p>
     </div>
   );
 };
