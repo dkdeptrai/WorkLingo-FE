@@ -1,6 +1,7 @@
 // src/services/auth.service.ts
 
 const API_URL = "http://localhost:8080/api/v1/auth/";
+const USER_API = "http://localhost:8080/api/v1/users/";
 class AuthService {
   async login(username: string, password: string) {
     try {
@@ -19,6 +20,8 @@ class AuthService {
         console.log("Login successful", data.access_token);
 
         localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         return localStorage.getItem("access_token");
       }
     } catch (error) {
@@ -64,12 +67,19 @@ class AuthService {
       if (data) {
         console.log("Registration successful", data);
         localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         return localStorage.getItem("access_token");
       }
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;
     }
+  }
+  async getUserDetails() {
+    try {
+      const response = await fetch;
+    } catch (error) {}
   }
 }
 

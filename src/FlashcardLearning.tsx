@@ -1,63 +1,74 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import LessonComponent from "./components/LessonComponent";
 import FavoriteIcon from "./assets/icons/favorite.svg?react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashCardAnswer from "./components/FlashCardAnswer";
+import LessonsService from "./services/lessons.service";
+import { useParams } from "react-router-dom";
+import lessonsService from "./services/lessons.service";
+import topicsService from "./services/topics.service";
+import { errors } from "web3";
 interface FlashcardLearningProps {
   // Define your component props here
 }
 
+interface flashcard {
+  id: number;
+  frontHTML: string;
+  backHTML: string;
+}
+
 const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
-  // Add your component logic here
-  const topic = [
-    {
-      name: "Katakana",
-      numberOfCards: 12,
-    },
-    {
-      name: "Hiragana",
-      numberOfCards: 12,
-    },
-    {
-      name: "Kanji",
-      numberOfCards: 12,
-    },
-  ];
+  const lessonId = useParams<{ id: string }>().id;
+  const [lesson, setLesson] = useState();
+  const [topic, setTopic] = useState();
+  const [flashcards, setFlashcards] = useState<flashcard[]>([]);
+  const [lessons, setLessons] = useState([]);
+
+  const fetchFlashcard = async () => {
+    const cards = await lessonsService.getFlashcards(lessonId!);
+    setFlashcards(
+      cards.map((card: any) => ({
+        id: card.id,
+        frontHTML: card.question,
+        backHTML: card.answer,
+      }))
+    );
+  };
+
+  const fetchTopic = async () => {
+    try {
+      setTopic(await lessonsService.getTopicOfLesson(lessonId!));
+    } catch (error) {
+      console.error("Error fetching lessons: ", error);
+      throw error;
+    }
+  };
+
+  const fetchLesson = async () => {
+    setLesson(await lessonsService.getLesson(lessonId!));
+  };
+
+  const fetchLessons = async () => {
+    try {
+      if (topic) {
+        setLessons(await topicsService.getLessonsInTopic(topic.id, 0, 10));
+      }
+    } catch (error) {
+      console.error("Error fetching lessons: ", error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    fetchFlashcard();
+    fetchTopic();
+  }, [lessonId]);
+  useEffect(() => {
+    fetchLessons();
+    fetchLesson();
+  }, [topic]);
 
   // TODO: Write function to fetch and convert to cards list
-
-  const cards = [
-    {
-      frontHTML: `What is the capital of Alaska?`,
-      backHTML: "Juneau",
-    },
-    {
-      frontHTML: "What is the capital of California?",
-      backHTML: "Sacramento",
-    },
-    {
-      frontHTML: "What is the capital of New York?",
-      backHTML: "Albany",
-    },
-    {
-      frontHTML: "What is the capital of Florida?",
-      backHTML: "Tallahassee",
-    },
-    {
-      frontHTML: "What is the capital of Texas?",
-      backHTML: "Austin",
-    },
-    {
-      frontHTML: "What is the capital of New Mexico?",
-      backHTML: "Santa Fe",
-    },
-    {
-      frontHTML: "What is the capital of Arizona?",
-      backHTML: "Phoenix",
-    },
-  ];
-
-  useEffect(() => {}, []); // TODO: add logic for favorite button toggle
 
   return (
     <div className="bg-background-color w-full flex flex-row gap-10 px-14">
@@ -67,17 +78,19 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
         </div>
         {/* // TODO: replace with variable */}
         <div className="bg-text-padding-color px-3 py-1 rounded-[3px]">
-          {"In the office"}
+          {topic ? topic.name : ""}
         </div>
         <div className="w-full flex flex-row gap-12 items-center my-6 ">
-          <div className="text-3xl font-semibold">Marketing Vocabulary</div>
+          <div className="text-3xl font-semibold">
+            {lesson ? lesson.title : ""}
+          </div>
           <button className="bg-primary-color text-white px-4 py-1 rounded-md">
             Create a Quiz
           </button>
-          <button className="bg-white text-primary-color ml-auto px-4 py-1 rounded-md">
+          <button className="bg-transparent text-primary-color ml-auto px-4 py-1 rounded-md">
             <FavoriteIcon className="w-6 h-6" />
           </button>
-        </div>
+        </div>{" "}
         <div className="w-full h-auto items-center">
           <FlashcardArray
             FlashcardArrayStyle={{
@@ -88,26 +101,27 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
             frontContentStyle={{
               width: "100%",
               height: "100%",
+              padding: "1rem",
+              fontWeight: "semibold",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "var(--light-blue-color)",
-
-              // Additional styles for the front content
             }}
             backContentStyle={{
               width: "100%",
               height: "100%",
+              padding: "1rem",
+              textAlign: "center",
+              fontSize: "1.5rem",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "var(--light-blue-color)",
-
-              // Additional styles for the back content
             }}
-            cards={cards}
+            cards={flashcards}
           />
         </div>
         <div className="flex flex-row my-4">
@@ -123,7 +137,7 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
           </div>
         </div>
         <div className="w-full flex flex-col gap-4">
-          {cards.map((card, index) => (
+          {flashcards.map((card, index) => (
             <FlashCardAnswer
               key={index}
               question={card.frontHTML}
@@ -134,9 +148,12 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
       </div>
       <div className="w-1/4 flex flex-col gap-4 items-start">
         <div className="text-xl font-medium">Other lessons in this topic</div>
-        {topic.map((topicItem, index) => (
-          <LessonComponent key={index} topic={topicItem} />
-        ))}
+        {lessons.map(
+          (lesson, index) =>
+            lesson.id !== Number(lessonId) && (
+              <LessonComponent key={index} topic={lesson} />
+            )
+        )}
       </div>
     </div>
   );
