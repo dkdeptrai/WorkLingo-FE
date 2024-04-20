@@ -15,7 +15,7 @@ const CreateLessonPage: React.FC<Props> = () => {
   const topicId = searchParams.get("topicId");
   const [topic, setTopic] = useState(null);
   const [lessonName, setLessonName] = useState("Untitled Lesson");
-  const [privacy, setPrivacy] = useState("");
+  const [privacy, setPrivacy] = useState("Private");
   const [flashcards, setFlashcards] = useState([]);
   const [currentRenderIndex, setCurrentRenderIndex] = useState(0);
 
@@ -92,6 +92,10 @@ const CreateLessonPage: React.FC<Props> = () => {
       );
     }
   };
+
+  useEffect(() => {
+    console.log(privacy);
+  }, [privacy]);
 
   useEffect(() => {
     fetchTopic();
