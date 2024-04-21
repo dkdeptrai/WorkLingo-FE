@@ -33,7 +33,8 @@ class AuthService {
   async logout() {
     try {
       localStorage.removeItem("access_token");
-      return localStorage.getItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
     } catch (error) {
       console.error("Logout failed:", error);
       throw error;
@@ -78,7 +79,6 @@ class AuthService {
   }
   async getUserDetails() {
     try {
-      const response = await fetch;
     } catch (error) {}
   }
 }

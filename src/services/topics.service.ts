@@ -50,9 +50,33 @@ class TopicsService {
         }
       );
       const data = await response.json();
-      return data.results;
+      const lessons = data.results.filter(
+        (lesson) => lesson.privacy !== "PRIVATE"
+      );
+      return lessons;
     } catch (error) {
       console.error("Error fetching lessons in topic: ", error);
+      throw error;
+    }
+  }
+
+  async searchByTitle(query: string, page: number, pageSize: number) {
+    try {
+      const response = await fetch(
+        `${API_URL}/search?query=${query}&page=${page}&size=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("Search results: ", data);
+      return data;
+    } catch (error) {
+      console.error("Error searching for topics: ", error);
       throw error;
     }
   }
