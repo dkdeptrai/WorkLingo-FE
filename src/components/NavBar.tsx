@@ -63,9 +63,20 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
             navigate("/");
           }}
         />
-        <Link to="/">Home</Link>
-        <Link to="/user/lessons">Your Lessons</Link>
-        <Link to="/quiz">Quiz</Link>
+        {user?.role === "admin" ? (
+          <>
+            <Link to="/manager/users">Users</Link>
+            <Link to="/manager/flashcards">Flascards</Link>
+            <Link to="/manager/topics">Topics</Link>
+            <Link to="/manager/lessons">Lessons</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/">Home</Link>
+            <Link to="/user/lessons">Your Lessons</Link>
+            <Link to="/quiz">Quiz</Link>
+          </>
+        )}
       </div>
       <div className="justify-self-end items-center flex flex-row gap-4">
         <Search onClick={toggleSearchBar} />
