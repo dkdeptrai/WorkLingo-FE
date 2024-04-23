@@ -33,14 +33,7 @@ function App() {
                 </div>
                 <Routes>
                   <Route path="/login" element={<Authentication />} />
-                  <Route
-                    path="/homepage"
-                    element={
-                      // <ProtectedRoute>
-                      <HomePage />
-                      // </ProtectedRoute>
-                    }
-                  />
+                  <Route path="/homepage" element={<HomePage />} />
                   <Route path="/" element={<LandingPage />} />
                   <Route
                     path="/topics"

@@ -31,10 +31,10 @@ const LandingPage: React.FC = () => {
   return (
     <div className="w-full bg-[url('./assets/icons/background-pattern.png')] object-fill flex flex-col gap-20 relative z-1">
       <div className="hero flex flex-col items-center bg-[url('./assets/icons/hero.svg')] gap-10 px-20 pt-28 pb-48 relative -z-50 ">
-        <div className="text-primary-text-color text-5xl font-extrabold">
+        <div className="text-primary-text-color text-center text-5xl font-extrabold">
           Công việc bận rộn không thể cản trở việc học tiếng Anh của bạn nữa!
         </div>
-        <div className="text-primary-text-color text-1xl font-medium mx-32">
+        <div className="text-primary-text-color text-center text-1xl font-medium mx-32">
           WorkLingo là nền tảng giúp người đi làm học Tiếng Anh thông qua hệ
           thống Flashcards và Quiz đa dạng, người học có thể cá nhân hoá để phù
           hợp với bản thân. Tiếng Anh giúp mở rộng cơ hội nghề nghiệp trong

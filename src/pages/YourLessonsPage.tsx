@@ -12,17 +12,12 @@ interface YourLessonsPageProps {
 }
 
 const YourLessonsPage: React.FC<YourLessonsPageProps> = () => {
-  const navigate = useNavigate();
-  const { accessToken, setAccessToken } = useAuth();
-
-  const topicId = useParams<{ id: string }>().id;
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useAuth();
 
   const [lessons, setLessons] = useState([]);
-  const [topic, setTopic] = useState<Topic | null>(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    size: 10,
+    size: 9,
     totalPages: 0,
   });
   const handlePreviousClick = () => {
@@ -48,7 +43,11 @@ const YourLessonsPage: React.FC<YourLessonsPageProps> = () => {
     try {
       console.log("user", user);
       if (user) {
-        const response = await userService.getLessonsByUser(user.id);
+        const response = await userService.getLessonsByUser(
+          user.id,
+          paginationModel.page,
+          paginationModel.size
+        );
         setLessons(response.results);
         setPaginationModel({
           ...paginationModel,
@@ -62,17 +61,8 @@ const YourLessonsPage: React.FC<YourLessonsPageProps> = () => {
   };
 
   useEffect(() => {
-    setUser(
-      localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")!)
-        : null
-    );
-    console.log("user", user);
-  }, []);
-
-  useEffect(() => {
     fetchLessons();
-  }, [user]);
+  }, [paginationModel.page]);
 
   if (user === null) {
     return <div>loading</div>;
@@ -89,8 +79,6 @@ const YourLessonsPage: React.FC<YourLessonsPageProps> = () => {
           {lessons.map((lesson) => (
             <LessonComponent lesson={lesson} />
           ))}
-
-          {/* //TODO: Add Pagination */}
         </div>
         <div className="flex flex-row gap-2 self-center">
           <PreviousArrowIcon onClick={handlePreviousClick} />

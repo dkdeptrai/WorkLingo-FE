@@ -107,6 +107,22 @@ class LessonsService {
       throw error;
     }
   }
+  async getTopLessons() {
+    try {
+      const response = await fetch(`${API_URL}/top-rating?page=0&size=5`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching top lessons: ", error);
+      throw error;
+    }
+  }
 }
 
 export default new LessonsService();

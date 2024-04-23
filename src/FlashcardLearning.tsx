@@ -27,13 +27,15 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   const [lesson, setLesson] = useState();
   const [topic, setTopic] = useState(null);
   const [flashcards, setFlashcards] = useState<flashcard[]>([]);
-  const [lessons, setLessons] = useState([]);
+  const [lessons, setLessons] = useState();
   const [author, setAuthor] = useState(null);
   const [upvotes, setUpvotes] = useState();
   const [downvotes, setDownvotes] = useState();
   const [vote, setVote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showAnswers, setShowAnswers] = useState(false);
   const { user } = useAuth();
+
   const fetchFlashcard = async () => {
     const cards = await lessonsService.getFlashcards(lessonId!);
     setFlashcards(
@@ -50,20 +52,12 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
     setLesson(data);
     setUpvotes(data.numberOfUpVotes);
     setDownvotes(data.numberOfDownVotes);
+    setTopic(data.topic);
   };
 
   const fetchLessons = async () => {
-    try {
-      if (topic) {
-        const data = await topicsService.getLessonsInTopic(topic.id, 0, 10)
-          .results;
-        console.log("lessons", data);
-        setLessons(data);
-      }
-    } catch (error) {
-      console.error("Error fetching lessons: ", error);
-      throw error;
-    }
+    const response = await lessonsService.getTopLessons();
+    setLessons(response.results);
   };
 
   const fetchAuthor = async () => {
@@ -74,6 +68,10 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
       console.error("Error fetching author: ", error);
       throw error;
     }
+  };
+
+  const toggleAnswers = () => {
+    setShowAnswers(!showAnswers);
   };
 
   const handleUpvote = async () => {
@@ -136,29 +134,34 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
     }
   };
 
-  useEffect(() => {}, [upvotes, downvotes]);
+  useEffect(() => {
+    fetchLesson();
+  }, []);
+
+  useEffect(() => {
+    fetchLessons();
+  }, []);
+
+  useEffect(() => {
+    console.log("lessons", lessons);
+  }, [lessons]);
 
   useEffect(() => {
     fetchFlashcard();
   }, [lessonId]);
+
   useEffect(() => {
     if (lesson) {
       fetchAuthor();
-      fetchLessons();
       checkRating();
-      console.log(lesson.topic);
-      // setTopic(lesson.topic);
     }
   }, [lesson]);
-  useEffect(() => {
-    fetchLesson();
-  }, [topic]);
 
   return (
     lesson &&
     author && (
       <div className="bg-background-color w-full flex flex-row gap-10 px-14">
-        <div className="w-3/4 flex flex-col items-start">
+        <div className="w-full flex flex-col items-start">
           <div className="text-secondary-text-color text-sm font-bold my-2">
             TOPIC
           </div>
@@ -240,22 +243,28 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
               <div>{downvotes}</div>
             </div>
           </div>
+          <button className="border-2 rounded p-2 my-4" onClick={toggleAnswers}>
+            {showAnswers ? "Hide Answers" : "Show Answers"}
+          </button>
           <div className="w-full flex flex-col gap-4">
-            {flashcards.map((card, index) => (
-              <FlashCardAnswer
-                key={index}
-                question={card.frontHTML}
-                answer={card.backHTML}
-              />
-            ))}
+            {flashcards.map(
+              (card, index) =>
+                showAnswers && (
+                  <FlashCardAnswer
+                    key={index}
+                    question={card.frontHTML}
+                    answer={card.backHTML}
+                  />
+                )
+            )}
           </div>
         </div>
         <div className="w-1/4 flex flex-col gap-4 items-start">
-          <div className="text-xl font-medium">Other lessons in this topic</div>
+          <div className="text-xl font-medium">Top Lessons</div>
           {lessons.map(
-            (lesson, index) =>
+            (lesson) =>
               lesson.id !== Number(lessonId) && (
-                <LessonComponent key={index} lesson={lesson} />
+                <LessonComponent lesson={lesson} />
               )
           )}
         </div>

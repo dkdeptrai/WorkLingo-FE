@@ -102,15 +102,18 @@ class UserService {
     }
   }
 
-  async getLessonsByUser(userId: number) {
+  async getLessonsByUser(userId: number, page = 0, size = 10) {
     try {
-      const response = await fetch(`${API_URL}/${userId}/lessons`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/${userId}/lessons?page=${page}&size=${size}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
       const data = await response.json();
 
       return data;
