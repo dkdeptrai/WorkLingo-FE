@@ -24,7 +24,10 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      navigate(`/search?searchQuery=${searchTerm}`);
+      const uniqueKey = Date.now();
+      navigate(`/search?searchQuery=${searchTerm}&key=${uniqueKey}`, {
+        replace: true,
+      });
       setSearchTerm("");
     }
   };
@@ -61,7 +64,7 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
           }}
         />
         <Link to="/">Home</Link>
-        <Link to="/topics">Topics</Link>
+        <Link to="/user/lessons">Your Lessons</Link>
         <Link to="/quiz">Quiz</Link>
       </div>
       <div className="justify-self-end items-center flex flex-row gap-4">

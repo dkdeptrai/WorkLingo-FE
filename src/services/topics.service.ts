@@ -30,7 +30,7 @@ class TopicsService {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      return response.json();
+      return await response.json();
     } catch (error) {
       console.error("Error fetching topic: ", error);
       throw error;
@@ -53,7 +53,8 @@ class TopicsService {
       const lessons = data.results.filter(
         (lesson) => lesson.privacy !== "PRIVATE"
       );
-      return lessons;
+      data.results = lessons;
+      return data;
     } catch (error) {
       console.error("Error fetching lessons in topic: ", error);
       throw error;

@@ -11,6 +11,8 @@ import LessonsPage from "./pages/LessonsPage";
 import Profile from "./pages/Profile/Profile";
 import CreateLessonPage from "./pages/CreateLessonPage";
 import SearchResultsPage from "./pages/SearchResultsPage";
+import { dividerClasses } from "@mui/material";
+import YourLessonsPage from "./pages/YourLessonsPage";
 
 function App() {
   return (
@@ -69,6 +71,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/lessons"
+                element={
+                  <ProtectedRoute>
+                    <YourLessonsPage />
                   </ProtectedRoute>
                 }
               />

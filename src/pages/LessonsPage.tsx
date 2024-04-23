@@ -3,8 +3,10 @@ import LessonComponent from "../components/LessonComponent";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import LessonsService from "../services/lessons.service";
 import topicsService from "../services/topics.service";
+import ForwardArrowIcon from "../assets/icons/forward_arrow_icon.svg?react";
+import PreviousArrowIcon from "../assets/icons/previous_arrow_icon.svg?react";
 
-interface TopicsPageProps {
+interface LessonsPageProps {
   // Add any props you need for the TopicsPage component
 }
 
@@ -16,9 +18,15 @@ interface Topic {
   numberOfLessons: number;
 }
 
-const LessonsPage: React.FC<TopicsPageProps> = () => {
+const LessonsPage: React.FC<LessonsPageProps> = () => {
   // Add your component logic here
   const navigate = useNavigate();
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    size: 10,
+    totalPages: 0,
+  });
 
   const topicId = useParams<{ id: string }>().id;
 
@@ -31,11 +39,41 @@ const LessonsPage: React.FC<TopicsPageProps> = () => {
 
   const fetchLessons = async () => {
     try {
-      setLessons(await topicsService.getLessonsInTopic(topicId!, 0, 10));
+      const data = await topicsService.getLessonsInTopic(
+        topicId!,
+        paginationModel.page,
+        paginationModel.size
+      );
+      setLessons(data.results);
+      setPaginationModel({
+        ...paginationModel,
+        totalPages: data.totalPages,
+      });
     } catch (error) {
       console.error("Error fetching lessons: ", error);
       throw error;
     }
+  };
+
+  const handlePreviousClick = () => {
+    if (paginationModel.page === 0) {
+      return;
+    }
+    setPaginationModel({
+      ...paginationModel,
+      page: paginationModel.page - 1,
+    });
+  };
+
+  const handleForwardClick = () => {
+    console.log(paginationModel);
+    if (paginationModel.page === paginationModel.totalPages - 1) {
+      return;
+    }
+    setPaginationModel({
+      ...paginationModel,
+      page: paginationModel.page + 1,
+    });
   };
 
   const fetchTopic = async () => {
@@ -50,7 +88,7 @@ const LessonsPage: React.FC<TopicsPageProps> = () => {
   useEffect(() => {
     fetchLessons();
     fetchTopic();
-  }, []);
+  }, [paginationModel.page]);
 
   return (
     <>
@@ -88,9 +126,13 @@ const LessonsPage: React.FC<TopicsPageProps> = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {lessons.map((lesson) => (
-            <LessonComponent topic={lesson} />
+            <LessonComponent lesson={lesson} />
           ))}
-          {/* //TODO: Add Pagination */}
+        </div>
+        <div className="flex flex-row gap-2 self-center">
+          <PreviousArrowIcon onClick={handlePreviousClick} />
+          <div>{paginationModel.page + 1}</div>
+          <ForwardArrowIcon onClick={handleForwardClick} />
         </div>
       </div>
     </>

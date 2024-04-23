@@ -71,6 +71,10 @@ const CreateLessonPage: React.FC<Props> = () => {
   };
 
   const handlePublish = async () => {
+    if (flashcards.length === 0) {
+      alert("Please add flashcards before publishing");
+      return;
+    }
     const invalidFlashcards = checkForEmptyFields();
     console.log(invalidFlashcards);
     if (invalidFlashcards.length > 0) {

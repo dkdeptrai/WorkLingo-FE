@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import topicsService from "../services/topics.service";
 import Search from "../assets/icons/search.svg?react";
 import ForwardArrowIcon from "../assets/icons/forward_arrow_icon.svg?react";
@@ -10,13 +10,14 @@ interface SearchResultsPageProps {
 }
 
 const SearchResultsPage: React.FC<SearchResultsPageProps> = () => {
+  const location = useLocation();
   // Add your component logic here
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [topics, setTopics] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 9,
     totalPage: 0,
   });
   const fetchSearchResults = async () => {
@@ -43,22 +44,14 @@ const SearchResultsPage: React.FC<SearchResultsPageProps> = () => {
 
   useEffect(() => {
     fetchSearchResults();
-  }, [paginationModel.page, paginationModel.pageSize]);
+  }, [
+    paginationModel.page,
+    paginationModel.pageSize,
+    searchParams.get("searchQuery"),
+  ]);
 
   return (
-    <div className="flex flex-col gap-4 p-8">
-      <div className="flex flex-row gap-4 items-center border-2 border-input-border-color p-2 rounded w-3/5">
-        <Search />
-        <input
-          type="text"
-          placeholder="Search for Topics"
-          onKeyDown={handleKeyDown}
-          className="w-full"
-          onChange={(e) => setSearchTerm(e.target.value)}
-          value={searchTerm}
-        />
-      </div>
-
+    <div className="flex flex-col gap-4 p-8" key={location.pathname}>
       <h1>Search Results for {searchParams.get("searchQuery")}</h1>
       <div className="grid grid-cols-3 gap-4">
         {topics && topics.map((topic) => <TopicComponent topic={topic} />)}

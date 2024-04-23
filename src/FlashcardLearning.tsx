@@ -8,6 +8,10 @@ import lessonsService from "./services/lessons.service";
 import topicsService from "./services/topics.service";
 import userService from "./services/user.service";
 import DefaultUserIcon from "./assets/icons/default_user_icon.svg?react";
+import UpvoteIcon from "./assets/icons/upvote_icon.svg?react";
+import DownvoteIcon from "./assets/icons/downvote_icon.svg?react";
+import ratingsService from "./services/ratings.service";
+import { useAuth } from "./contexts/AuthContext";
 interface FlashcardLearningProps {
   // Define your component props here
 }
@@ -21,14 +25,17 @@ interface flashcard {
 const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   const lessonId = useParams<{ id: string }>().id;
   const [lesson, setLesson] = useState();
-  const [topic, setTopic] = useState();
+  const [topic, setTopic] = useState(null);
   const [flashcards, setFlashcards] = useState<flashcard[]>([]);
   const [lessons, setLessons] = useState([]);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [author, setAuthor] = useState(null);
+  const [upvotes, setUpvotes] = useState();
+  const [downvotes, setDownvotes] = useState();
+  const [vote, setVote] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   const fetchFlashcard = async () => {
     const cards = await lessonsService.getFlashcards(lessonId!);
-    console.log(cards);
     setFlashcards(
       cards.map((card: any) => ({
         id: card.id,
@@ -38,35 +45,20 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
     );
   };
 
-  const fetchTopic = async () => {
-    try {
-      const data = await lessonsService.getTopicOfLesson(lessonId!);
-      console.log(data);
-      setTopic(data);
-    } catch (error) {
-      console.error("Error fetching lessons: ", error);
-      throw error;
-    }
-  };
-
   const fetchLesson = async () => {
-    try {
-      const data = await lessonsService.getLesson(lessonId!);
-      console.log(data);
-      const author = await userService.getUser(data.authorId);
-      console.log(author);
-      setAuthor(author);
-      setLesson(data);
-    } catch (error) {
-      console.error("Error fetching lessons: ", error);
-      throw error;
-    }
+    const data = await lessonsService.getLesson(lessonId!);
+    setLesson(data);
+    setUpvotes(data.numberOfUpVotes);
+    setDownvotes(data.numberOfDownVotes);
   };
 
   const fetchLessons = async () => {
     try {
       if (topic) {
-        setLessons(await topicsService.getLessonsInTopic(topic.id, 0, 10));
+        const data = await topicsService.getLessonsInTopic(topic.id, 0, 10)
+          .results;
+        console.log("lessons", data);
+        setLessons(data);
       }
     } catch (error) {
       console.error("Error fetching lessons: ", error);
@@ -74,132 +66,201 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
     }
   };
 
-  const handleFavoriteToggle = async () => {
-    // TODO: Handle Favorite
-    // if (isFavorite) {
-    //   await lessonsService.deleteFavoriteLesson(1, Number(lessonId));
-    // } else {
-    //   await lessonsService.addFavoriteLesson(1, Number(lessonId));
-    // }
-    setIsFavorite(!isFavorite);
+  const fetchAuthor = async () => {
+    try {
+      const user = await userService.getUser(lesson.authorId);
+      setAuthor(user);
+    } catch (error) {
+      console.error("Error fetching author: ", error);
+      throw error;
+    }
   };
+
+  const handleUpvote = async () => {
+    if (!isLoading) {
+      setIsLoading(true);
+      if (vote === "UPVOTE") {
+        await ratingsService.deleteRating(lesson.id, user.id);
+        setVote("");
+        return;
+      }
+      setVote("UPVOTE");
+      if (vote === "DOWNVOTE") {
+        setDownvotes(downvotes - 1);
+        await ratingsService.deleteRating(lesson.id, user.id);
+      }
+      setUpvotes(upvotes + 1);
+      const response = await ratingsService.addRating(
+        lesson.id,
+        "UPVOTE",
+        user.id
+      );
+      setIsLoading(false);
+      console.log("response", response);
+    }
+  };
+
+  const checkRating = async () => {
+    console.log("lesson", lesson.id);
+    const rating = await ratingsService.checkRating(lesson.id, user.id);
+    console.log("rating", rating);
+
+    if (rating === "UPVOTE") {
+      setVote("UPVOTE");
+    } else if (rating === "DOWNVOTE") {
+      setVote("DOWNVOTE");
+    }
+  };
+
+  const handleDownvote = async () => {
+    if (!isLoading) {
+      if (vote === "DOWNVOTE") {
+        await ratingsService.deleteRating(lesson.id, user.id);
+        setVote("");
+
+        return;
+      }
+      setVote("DOWNVOTE");
+      if (vote === "UPVOTE") {
+        setUpvotes(upvotes - 1);
+        await ratingsService.deleteRating(lesson.id, user.id);
+      }
+      setDownvotes(downvotes + 1);
+      const response = await ratingsService.addRating(
+        lesson.id,
+        "DOWNVOTE",
+        user.id
+      );
+      setIsLoading(false);
+      console.log("response", response);
+    }
+  };
+
+  useEffect(() => {}, [upvotes, downvotes]);
 
   useEffect(() => {
     fetchFlashcard();
-    fetchTopic();
   }, [lessonId]);
   useEffect(() => {
-    fetchLessons();
+    if (lesson) {
+      fetchAuthor();
+      fetchLessons();
+      checkRating();
+      console.log(lesson.topic);
+      // setTopic(lesson.topic);
+    }
+  }, [lesson]);
+  useEffect(() => {
     fetchLesson();
   }, [topic]);
 
-  // TODO: Write function to fetch and convert to cards list
-
   return (
-    <div className="bg-background-color w-full flex flex-row gap-10 px-14">
-      <div className="w-3/4 flex flex-col items-start">
-        <div className="text-secondary-text-color text-sm font-bold my-2">
-          TOPIC
-        </div>
-        {/* // TODO: replace with variable */}
-        <div className="bg-text-padding-color px-3 py-1 rounded-[3px]">
-          {topic ? topic.name : ""}
-        </div>
-        <div className="w-full flex flex-row gap-12 items-center my-6 ">
-          <div className="text-3xl font-semibold">
-            {lesson ? lesson.title : ""}
+    lesson &&
+    author && (
+      <div className="bg-background-color w-full flex flex-row gap-10 px-14">
+        <div className="w-3/4 flex flex-col items-start">
+          <div className="text-secondary-text-color text-sm font-bold my-2">
+            TOPIC
           </div>
-          <button className="bg-primary-color text-white px-4 py-1 rounded-md">
-            Create a Quiz
-          </button>
-          <button className="bg-transparent text-primary-color ml-auto px-4 py-1 rounded-md">
-            {isFavorite ? (
-              <FavoriteIcon
-                fill="transparent"
-                className="w-8 h-8"
-                onClick={handleFavoriteToggle}
-              />
-            ) : (
-              <FavoriteIcon
-                fill="yellow"
-                className="w-8 h-8"
-                onClick={handleFavoriteToggle}
-              />
-            )}
-          </button>
-        </div>{" "}
-        <div className="w-full h-auto items-center">
-          <FlashcardArray
-            FlashcardArrayStyle={{
-              width: "100%",
-              height: "100%",
-              fontSize: "2rem",
-            }}
-            frontContentStyle={{
-              width: "100%",
-              height: "100%",
-              padding: "1rem",
-              fontWeight: "semibold",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "var(--light-blue-color)",
-            }}
-            backContentStyle={{
-              width: "100%",
-              height: "100%",
-              padding: "1rem",
-              textAlign: "center",
-              fontSize: "1.5rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "var(--light-blue-color)",
-            }}
-            cards={flashcards}
-          />
-        </div>
-        <div className="flex flex-row my-4">
-          {author ? (
-            <img
-              className="object-scale-down h-14 w-14 flex-auto rounded-full mr-4"
-              src={author.avatarUrl}
-              alt=""
+          <div className="bg-text-padding-color px-3 py-1 rounded-[3px]">
+            {topic ? topic.name : ""}
+          </div>
+          <div className="w-full flex flex-row gap-12 items-center my-6 ">
+            <div className="text-3xl font-semibold">
+              {lesson ? lesson.title : ""}
+            </div>
+            <button className="bg-transparent text-primary-color ml-auto px-4 py-1 rounded-md">
+              <FavoriteIcon className="w-6 h-6" />
+            </button>
+          </div>{" "}
+          <div className="w-full h-auto items-center">
+            <FlashcardArray
+              FlashcardArrayStyle={{
+                width: "100%",
+                height: "100%",
+                fontSize: "2rem",
+              }}
+              frontContentStyle={{
+                width: "100%",
+                height: "100%",
+                padding: "1rem",
+                fontWeight: "semibold",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "var(--light-blue-color)",
+              }}
+              backContentStyle={{
+                width: "100%",
+                height: "100%",
+                padding: "1rem",
+                textAlign: "center",
+                fontSize: "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "var(--light-blue-color)",
+              }}
+              cards={flashcards}
             />
-          ) : (
-            <DefaultUserIcon className="h-14 w-14 flex-auto rounded-full mr-4" />
-          )}
-          <div className="flex flex-col items-start">
-            {author && (
+          </div>
+          <div className="flex flex-row my-4 w-full">
+            <div className="flex flex-row">
+              {author.avatarUrl ? (
+                <img
+                  className="object-scale-down h-14 w-14 flex-auto rounded-full mr-4"
+                  src={author.avatarUrl}
+                  alt=""
+                />
+              ) : (
+                <DefaultUserIcon className="h-14 w-14 flex-auto rounded-full mr-4" />
+              )}
               <div className="flex flex-col items-start">
+                {/* TODO: replace with variable */}
                 <div className="text-xl font-medium">{`${author.firstname} ${author.lastname}`}</div>
-                <div className="text-lg font-sm">{author.jobTitle}</div>
+                <div className="text-lg font-sm">
+                  {author.jobTitle || "Teacher"}
+                </div>
               </div>
-            )}
+            </div>
+            <div className="flex flex-row gap-4 items-center ml-auto">
+              <UpvoteIcon
+                fill={vote === "UPVOTE" ? "red" : ""}
+                onClick={handleUpvote}
+                className="w-6 h-6 bg-transparent text-primary-color"
+              />
+              <div>{upvotes}</div>
+              <DownvoteIcon
+                fill={vote === "DOWNVOTE" ? "blue" : ""}
+                onClick={handleDownvote}
+                className="w-6 h-6 bg-transparent text-primary-color"
+              />
+              <div>{downvotes}</div>
+            </div>
+          </div>
+          <div className="w-full flex flex-col gap-4">
+            {flashcards.map((card, index) => (
+              <FlashCardAnswer
+                key={index}
+                question={card.frontHTML}
+                answer={card.backHTML}
+              />
+            ))}
           </div>
         </div>
-        <div className="w-full flex flex-col gap-4">
-          {flashcards.map((card, index) => (
-            <FlashCardAnswer
-              key={index}
-              question={card.frontHTML}
-              answer={card.backHTML}
-            />
-          ))}
+        <div className="w-1/4 flex flex-col gap-4 items-start">
+          <div className="text-xl font-medium">Other lessons in this topic</div>
+          {lessons.map(
+            (lesson, index) =>
+              lesson.id !== Number(lessonId) && (
+                <LessonComponent key={index} lesson={lesson} />
+              )
+          )}
         </div>
       </div>
-      <div className="w-1/4 flex flex-col gap-4 items-start">
-        <div className="text-xl font-medium">Other lessons in this topic</div>
-        {lessons.map(
-          (lesson, index) =>
-            lesson.id !== Number(lessonId) && (
-              <LessonComponent key={index} topic={lesson} />
-            )
-        )}
-      </div>
-    </div>
+    )
   );
 };
 
