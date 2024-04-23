@@ -20,6 +20,7 @@ class LessonsService {
   }
   async getTopicOfLesson(lessonId: string) {
     try {
+      console.log("token", localStorage.getItem("access_token"));
       const response = await fetch(`${API_URL}/${lessonId}`, {
         method: "GET",
         headers: {
@@ -27,6 +28,9 @@ class LessonsService {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
       const data = await response.json(); // Await the response.json() method
       return data.topic;
     } catch (error) {
@@ -44,7 +48,6 @@ class LessonsService {
         },
       });
       const data = await response.json();
-      console.log("Lesson: ", data);
       return data;
     } catch (error) {
       console.error("Error fetching lesson: ", error);
@@ -67,15 +70,6 @@ class LessonsService {
         authorId: user.id,
       };
 
-      // Log the request details
-      console.log("Request URL:", `${API_URL}`);
-      console.log("Request Method:", "POST");
-      console.log("Request Headers:", {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      });
-      console.log("Request Body:", requestBody);
-
       const response = await fetch(`${API_URL}`, {
         method: "POST",
         headers: {
@@ -85,15 +79,31 @@ class LessonsService {
         body: JSON.stringify(requestBody),
       });
 
-      // Log the response details
-      console.log("Response Status:", response.status);
-      console.log("Response Status Text:", response.statusText);
+      if (!response.ok) {
+        throw new Error("Failed to create lesson");
+      }
+
       const data = await response.json();
-      console.log("Response Body:", data);
 
       return data;
     } catch (error) {
-      console.error("Error creating lesson:", error);
+      console.log("Error creating lesson:", error);
+      throw error;
+    }
+  }
+  async getLessonsOfUser(userId: string) {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        headers: {
+          method: "GET",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching lessons: ", error);
       throw error;
     }
   }

@@ -1,5 +1,5 @@
 // src/services/auth.service.ts
-import { UserType } from '../models/UserType';
+import { UserType } from "../models/UserType";
 import axios, { AxiosResponse } from "axios";
 const API_URL = "http://localhost:8080/api/v1/auth/";
 const USER_API = "http://localhost:8080/api/v1/users/1";
@@ -35,7 +35,8 @@ class AuthService {
   async logout() {
     try {
       localStorage.removeItem("access_token");
-      return localStorage.getItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
     } catch (error) {
       console.error("Logout failed:", error);
       throw error;
@@ -78,7 +79,7 @@ class AuthService {
       throw error;
     }
   }
-  
+
   async getUserDetails(): Promise<UserType[]> {
     try {
       const response = await fetch(ALL_USERS_API, {

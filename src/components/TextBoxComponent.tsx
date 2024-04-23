@@ -18,11 +18,13 @@ const TextBoxComponent: React.FC<TextBoxComponentProps> = ({
   icon,
   ...props
 }) => {
-  const inputClass = `form-control${touched && error ? " is-invalid" : ""} `;
+  const inputClass = `form-control${
+    touched && error ? " is-invalid" : ""
+  } w-full h-full`;
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
-      <div className="flex flex-row items-center gap-x-4 input-icon-wrapper relative border border-solid border-1 border-input-border-color rounded-[2px] px-3 py-2">
+      <div className="flex flex-row  items-center gap-x-4 input-icon-wrapper relative border border-solid border-1 border-input-border-color rounded-[2px] px-3 py-2">
         {icon}
         <input
           type="text"
