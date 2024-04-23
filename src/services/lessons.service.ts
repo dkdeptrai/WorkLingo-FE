@@ -85,15 +85,27 @@ class LessonsService {
         body: JSON.stringify(requestBody),
       });
 
-      // Log the response details
-      console.log("Response Status:", response.status);
-      console.log("Response Status Text:", response.statusText);
       const data = await response.json();
-      console.log("Response Body:", data);
 
       return data;
     } catch (error) {
       console.error("Error creating lesson:", error);
+      throw error;
+    }
+  }
+  async getLessonsOfUser(userId: string) {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        headers: {
+          method: "GET",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching lessons: ", error);
       throw error;
     }
   }

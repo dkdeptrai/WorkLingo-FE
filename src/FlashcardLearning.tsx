@@ -6,6 +6,8 @@ import FlashCardAnswer from "./components/FlashCardAnswer";
 import { useParams } from "react-router-dom";
 import lessonsService from "./services/lessons.service";
 import topicsService from "./services/topics.service";
+import userService from "./services/user.service";
+import DefaultUserIcon from "./assets/icons/default_user_icon.svg?react";
 interface FlashcardLearningProps {
   // Define your component props here
 }
@@ -22,7 +24,8 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   const [topic, setTopic] = useState();
   const [flashcards, setFlashcards] = useState<flashcard[]>([]);
   const [lessons, setLessons] = useState([]);
-
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [author, setAuthor] = useState(null);
   const fetchFlashcard = async () => {
     const cards = await lessonsService.getFlashcards(lessonId!);
     console.log(cards);
@@ -37,7 +40,9 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
 
   const fetchTopic = async () => {
     try {
-      setTopic(await lessonsService.getTopicOfLesson(lessonId!));
+      const data = await lessonsService.getTopicOfLesson(lessonId!);
+      console.log(data);
+      setTopic(data);
     } catch (error) {
       console.error("Error fetching lessons: ", error);
       throw error;
@@ -45,7 +50,17 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   };
 
   const fetchLesson = async () => {
-    setLesson(await lessonsService.getLesson(lessonId!));
+    try {
+      const data = await lessonsService.getLesson(lessonId!);
+      console.log(data);
+      const author = await userService.getUser(data.authorId);
+      console.log(author);
+      setAuthor(author);
+      setLesson(data);
+    } catch (error) {
+      console.error("Error fetching lessons: ", error);
+      throw error;
+    }
   };
 
   const fetchLessons = async () => {
@@ -58,6 +73,17 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
       throw error;
     }
   };
+
+  const handleFavoriteToggle = async () => {
+    // TODO: Handle Favorite
+    // if (isFavorite) {
+    //   await lessonsService.deleteFavoriteLesson(1, Number(lessonId));
+    // } else {
+    //   await lessonsService.addFavoriteLesson(1, Number(lessonId));
+    // }
+    setIsFavorite(!isFavorite);
+  };
+
   useEffect(() => {
     fetchFlashcard();
     fetchTopic();
@@ -87,7 +113,19 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
             Create a Quiz
           </button>
           <button className="bg-transparent text-primary-color ml-auto px-4 py-1 rounded-md">
-            <FavoriteIcon className="w-6 h-6" />
+            {isFavorite ? (
+              <FavoriteIcon
+                fill="transparent"
+                className="w-8 h-8"
+                onClick={handleFavoriteToggle}
+              />
+            ) : (
+              <FavoriteIcon
+                fill="yellow"
+                className="w-8 h-8"
+                onClick={handleFavoriteToggle}
+              />
+            )}
           </button>
         </div>{" "}
         <div className="w-full h-auto items-center">
@@ -124,15 +162,22 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
           />
         </div>
         <div className="flex flex-row my-4">
-          <img
-            className="object-scale-down h-14 w-14 flex-auto rounded-full mr-4"
-            src="https://picsum.photos/200"
-            alt=""
-          />
+          {author ? (
+            <img
+              className="object-scale-down h-14 w-14 flex-auto rounded-full mr-4"
+              src={author.avatarUrl}
+              alt=""
+            />
+          ) : (
+            <DefaultUserIcon className="h-14 w-14 flex-auto rounded-full mr-4" />
+          )}
           <div className="flex flex-col items-start">
-            {/* TODO: replace with variable */}
-            <div className="text-xl font-medium">John Doe</div>
-            <div className="text-lg font-sm">Teacher</div>
+            {author && (
+              <div className="flex flex-col items-start">
+                <div className="text-xl font-medium">{`${author.firstname} ${author.lastname}`}</div>
+                <div className="text-lg font-sm">{author.jobTitle}</div>
+              </div>
+            )}
           </div>
         </div>
         <div className="w-full flex flex-col gap-4">

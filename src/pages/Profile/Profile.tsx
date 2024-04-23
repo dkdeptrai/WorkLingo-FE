@@ -98,6 +98,9 @@ const Profile: React.FC<ProfileProps> = () => {
     setImageUrl(user?.avatarUrl);
   }, [user]);
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="flex flex-col container text-left items-center">
       <div className="bg-[#fff] p-12">
@@ -240,16 +243,7 @@ const Profile: React.FC<ProfileProps> = () => {
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {/* Add your component logic here */}
-              {/* Add your component logic here */}
-              {/* Add your component logic here */}
-            </div>
-            <div className="flex flex-row gap-2 h-auto self-center">
-              {/* Add your component logic here */}
-              {/* Add your component logic here */}
-              {/* Add your component logic here */}
-            </div>
+            <div className="grid grid-cols-3 gap-4"></div>
           </TabPanel>
         </Tabs>
       </div>

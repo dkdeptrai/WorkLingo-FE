@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/icons/logo.svg?react";
-import Languages from "../assets/icons/languages.svg?react";
 import Search from "../assets/icons/search.svg?react";
 import authService from "../services/auth.service";
 import { useAuth } from "../contexts/AuthContext";
@@ -12,8 +11,12 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ className }) => {
-  const { setAccessToken } = useAuth();
-  const [user, setUser] = useState(null);
+  const { accessToken, setAccessToken } = useAuth();
+  const [user, setUser] = useState(
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user")!)
+      : null
+  );
   const navigate = useNavigate();
 
   const [showSearchBar, setShowSearchBar] = useState(false);
@@ -42,8 +45,11 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
         ? JSON.parse(localStorage.getItem("user")!)
         : null
     );
-  }, []);
+  }, [accessToken]);
 
+  if (user === null && localStorage.getItem("access_token") !== null) {
+    return <div>loading</div>;
+  }
   return (
     <nav
       className={`bg-white-background flex flex-row justify-start items-center p-1  ${className}`}
@@ -89,7 +95,6 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
           {user && <>{`${user.firstname} ${user.lastname}`}</>}
         </div>
 
-        {/* <Languages /> */}
         {user ? (
           <button
             className="bg-transparent hover:bg-primary-color text-primary-color font-semibold hover:text-white py-2 px-4 border border-primary-color hover:border-transparent rounded"
