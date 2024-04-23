@@ -1,7 +1,9 @@
 // src/services/auth.service.ts
-
+import { UserType } from '../models/UserType';
+import axios, { AxiosResponse } from "axios";
 const API_URL = "http://localhost:8080/api/v1/auth/";
-const USER_API = "http://localhost:8080/api/v1/users/";
+const USER_API = "http://localhost:8080/api/v1/users/1";
+const ALL_USERS_API = "http://localhost:8080/api/v1/users";
 class AuthService {
   async login(username: string, password: string) {
     try {
@@ -76,10 +78,35 @@ class AuthService {
       throw error;
     }
   }
-  async getUserDetails() {
+  
+  async getUserDetails(): Promise<UserType[]> {
     try {
-      const response = await fetch;
-    } catch (error) {}
+      const response = await fetch(ALL_USERS_API, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      const data = await response.json();
+      if (data) {
+        console.log("User details fetched successfully", data);
+        return data;
+      }
+    } catch (error) {
+      console.error("User details fetch failed:", error);
+      throw error;
+    }
+    return [];
+  }
+
+  async getCurrentUser(): Promise<UserType> {
+    const user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+    return {} as UserType;
   }
 }
 
