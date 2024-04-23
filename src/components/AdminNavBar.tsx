@@ -10,9 +10,8 @@ interface NavBarProps {
   className?: string;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ className }) => {
+const AdminNavBar: React.FC<NavBarProps> = ({ className }) => {
   const { setAccessToken } = useAuth();
-  const { user } = useAuth();
 
   const handleLogout = async () => {
     const token = await authService.logout();
@@ -24,21 +23,9 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
     >
       <div className="justify-self-start items-center flex flex-row gap-4 flex-1">
         <Logo />
-        {user?.role === "admin" ? (
-          <>
-            <Link to="/manager/users">Users</Link>
-            <Link to="/manager/flashcards">Flascards</Link>
-            <Link to="/manager/topics">Topics</Link>
-            <Link to="/manager/lessons">Lessons</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/">Home</Link>
-            <Link to="/topics">Topics</Link>
-            <Link to="/quiz">Quiz</Link>
-          </>
-        )}
-
+        <Link to="/">Home</Link>
+        <Link to="/topics">Topics</Link>
+        <Link to="/quiz">Quiz</Link>
         {/* Add more links as needed */}
       </div>
       <div className="justify-self-end items-center flex flex-row gap-4">
@@ -60,4 +47,4 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
   );
 };
 
-export default NavBar;
+export default AdminNavBar;
