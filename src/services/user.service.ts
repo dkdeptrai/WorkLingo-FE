@@ -7,6 +7,22 @@ const ALL_LESSONS_API = "http://localhost:8080/api/v1/lessons";
 const ALL_FLASHCARD_API = "http://localhost:8080/api/v1/flashcards";
 
 class UserService {
+  async updateFlashcard(topicId: number, formData: FormData) {
+    try {
+      const response = axios.post(`${ALL_FLASHCARD_API}/${topicId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = response.data;
+      return data;
+    }
+    catch (error) {
+      console.error("Failed to update topic", error);
+      throw error;
+    }
+  }
   async updateLessons(topicId: number, formData: FormData) {
     try {
       const response = axios.put(`${ALL_LESSONS_API}/${topicId}`, formData, {

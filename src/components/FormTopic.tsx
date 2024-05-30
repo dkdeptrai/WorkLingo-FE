@@ -36,6 +36,7 @@ const FormTopic: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
       const response = await userService.updateTopic(topicId, formData);
       window.location.reload();
       console.log('Topic updated successfully', response);
+      alert('Topic updated successfully');
     } catch (error) {
       console.error('Error updating topic:', error);
     }

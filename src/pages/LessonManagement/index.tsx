@@ -9,10 +9,11 @@ import { FC, useEffect, useState } from "react";
 import authService from "../../services/auth.service";
 import { TopicType } from "../../models/TopicType";
 import { LessonsType } from "../../models/LessonsType";
+import { LessonsData } from "../../models/LessonsData";
 
 
 const ApplicationsTransactions:FC = () =>{
-  const [userData, setUserData] = useState<LessonsType[]>([]);
+  const [userData, setUserData] = useState<LessonsData[]>([]);
   useEffect(() => {
     const fetchUserDetails = async () => {
       let response: LessonsType[] = []; 

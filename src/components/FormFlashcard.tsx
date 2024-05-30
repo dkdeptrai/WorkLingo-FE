@@ -2,27 +2,30 @@ import React, { useState } from "react";
 import userService from "../services/user.service";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { LessonsType } from "../models/LessonsType";
+import authService from "../services/auth.service";
+import { FlashcardType } from "../models/FlascardType";
 
 interface RecentOrdersTableProps {
-  userdata: LessonsType;
+  userdata: FlashcardType;
 }
 
-const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
-  const [title, setTitle] = useState(userdata.title);
-  const [visibility, setVisibility] = useState(userdata.visibility);
+const FormFlashcard: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
+  const [answer, setAnswer] = useState(userdata.answer);
+  const [question, setQuestion] = useState(userdata.question);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("visibility", visibility);
+    formData.append("answer", answer);
+    formData.append("question", question);
 
     const topicId = userdata.id;
 
     try {
-      const response = await userService.updateLessons(topicId, formData);
+      const response = await userService.updateFlashcard(topicId, formData);
       console.log("Topic updated successfully", response);
+      alert("Topic updated successfully");
       window.location.reload();
     } catch (error) {
       console.error("Error updating topic:", error);
@@ -47,7 +50,7 @@ const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
                 htmlFor="firstname"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Title
+                Question
               </label>
               <div className="mt-2">
                 <input
@@ -55,8 +58,8 @@ const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
                   name="firstname"
                   id="firstname"
                   autoComplete="username"
-                  onChange={(e) => setTitle(e.target.value)}
-                  value={title}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  value={question}
                   className="block flex-1 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                 />
               </div>
@@ -67,16 +70,18 @@ const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
                 htmlFor="about"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Visibility
+                Answer
               </label>
               <div className="mt-2">
-                <select
-                  value={visibility}
-                  onChange={(e) => setVisibility(e.target.value)}
-                >
-                  <option value="PUBLIC">PUBLIC</option>
-                  <option value="PRIVATE">PRIVATE</option>
-                </select>
+                <textarea
+                  id="about"
+                  name="about"
+                  rows={3}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  value={answer}
+                  className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
+                  placeholder=""
+                />
               </div>
             </div>
           </div>
@@ -101,4 +106,4 @@ const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
   );
 };
 
-export default FormLessons;
+export default FormFlashcard;

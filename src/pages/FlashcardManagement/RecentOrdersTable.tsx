@@ -35,6 +35,8 @@ import { TopicType } from "../../models/TopicType";
 import FormTopic from "../../components/FormTopic";
 import userService from "../../services/user.service";
 import { FlashcardType } from "../../models/FlascardType";
+import { Form } from "react-router-dom";
+import FormFlashcard from "../../components/FormFlashcard";
 
 interface RecentOrdersTableProps {
   cryptoOrders: FlashcardType[];
@@ -272,6 +274,20 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
+                      {userdata.id}
+                    </Typography>
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {format(cryptoOrder.email, 'MMMM dd yyyy')}
+                    </Typography> */}
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
                       {userdata.question}
                     </Typography>
                     {/* <Typography variant="body2" color="text.secondary" noWrap>
@@ -288,6 +304,71 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                     >
                       {userdata.answer}
                     </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title="Edit Order" arrow>
+                      <IconButton
+                        onClick={handleClickOpen}
+                        sx={{
+                          "&:hover": {
+                            // background: theme.colors.primary.lighter
+                          },
+                          color: theme.palette.primary.main,
+                        }}
+                        color="inherit"
+                        size="small"
+                      >
+                        <EditTwoToneIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="form-dialog-title"
+                    >
+                      <DialogContent>
+                        <FormFlashcard userdata={userdata} />
+                      </DialogContent>
+                    </Dialog>
+                    <Tooltip title="Delete Order" arrow>
+                      <IconButton
+                        onClick={() => setDeleteOpen(true)}
+                        sx={{
+                          "&:hover": {
+                            // background: theme.colors.error.lighter
+                          },
+                          color: theme.palette.error.main,
+                        }}
+                        color="inherit"
+                        size="small"
+                      >
+                        <DeleteTwoToneIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Dialog
+                      open={deleteOpen}
+                      onClose={handleDeleteClose}
+                      aria-labelledby="delete-dialog-title"
+                    >
+                      <DialogContent id="delete-dialog-title">
+                        Delete Order
+                      </DialogContent>
+                      <DialogContent>
+                        Are you sure you want to delete this order?
+                      </DialogContent>
+                      <DialogContent>
+                        <Button onClick={handleDeleteClose} color="primary">
+                          No
+                        </Button>
+                        <Button
+                          onClick={handleClose}
+                          color="primary"
+                          autoFocus
+                        >
+                          Yes
+                        </Button>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               );

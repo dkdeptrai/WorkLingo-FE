@@ -22,7 +22,7 @@ const FormLessons: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
 
     try {
       const response = await userService.updateLessons(topicId, formData);
-      console.log("Topic updated successfully", response);
+      alert("Topic updated successfully");
       window.location.reload();
     } catch (error) {
       console.error("Error updating topic:", error);

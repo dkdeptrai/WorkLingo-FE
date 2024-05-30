@@ -10,10 +10,11 @@ import { TopicType } from "../../models/TopicType";
 import FormTopic from "../../components/FormTopic";
 import CreateTopic from "../../components/CreateTopic";
 import { LessonsType } from "../../models/LessonsType";
+import { LessonsData } from "../../models/LessonsData";
 interface RecentOrdersTableProps {
-  userdata: LessonsType[];
+  userdata: LessonsData[];
 }
-const PageHeader: FC<RecentOrdersTableProps> = ({ userdata }: { userdata: LessonsType[] }) => {
+const PageHeader: FC<RecentOrdersTableProps> = ({ userdata }: { userdata: LessonsData[] }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);

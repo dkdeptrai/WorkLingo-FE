@@ -1,6 +1,6 @@
 
 export interface FlashcardType {
-  id: string;
+  id: number;
   question: string;
   answer: string;
   lessonId: string;

@@ -34,9 +34,10 @@ import BulkActions from "./BulkActions";
 import userService from "../../services/user.service";
 import { LessonsType } from "../../models/LessonsType";
 import FormLessons from "../../components/FormLessons";
+import { LessonsData } from "../../models/LessonsData";
 
 interface RecentOrdersTableProps {
-  cryptoOrders: LessonsType[];
+  cryptoOrders: LessonsData[];
 }
 
 interface Filters {
@@ -65,9 +66,9 @@ const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
 };
 
 const applyFilters = (
-  cryptoOrders: LessonsType[],
+  cryptoOrders: LessonsData[],
   filters: Filters
-): LessonsType[] => {
+): LessonsData[] => {
   if (!Array.isArray(cryptoOrders)) {
     console.error("Invalid argument: cryptoOrders should be an array");
     return [];
@@ -85,10 +86,10 @@ const applyFilters = (
 };
 
 const applyPagination = (
-  cryptoOrders: LessonsType[],
+  cryptoOrders: LessonsData[],
   page: number,
   limit: number
-): LessonsType[] => {
+): LessonsData[] => {
   return cryptoOrders.slice(page * limit, page * limit + limit);
 };
 
@@ -287,7 +288,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
-                      {userdata.topic}
+                      {userdata.topic.name}
                     </Typography>
                     {/* <Typography variant="body2" color="text.secondary" noWrap>
                       {format(cryptoOrder.email, 'MMMM dd yyyy')}

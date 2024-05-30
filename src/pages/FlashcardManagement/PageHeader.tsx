@@ -26,10 +26,10 @@ const PageHeader: FC<RecentOrdersTableProps> = ({ userdata }: { userdata: Flashc
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
         <Typography variant="h3" component="h3" gutterBottom>
-          Topic Management
+          Flashcard Management
         </Typography>
         <Typography variant="subtitle2">
-          Hello, these are your topic
+          Hello, these are your flashcards
         </Typography>
       </Grid>
     </Grid>

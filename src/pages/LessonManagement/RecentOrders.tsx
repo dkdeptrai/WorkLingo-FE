@@ -4,8 +4,9 @@ import { ChangeEvent, FC, useState } from 'react';
 import RecentOrdersTable from './RecentOrdersTable';
 import { TopicType } from '../../models/TopicType';
 import { LessonsType } from '../../models/LessonsType';
+import { LessonsData } from '../../models/LessonsData';
 interface RecentOrdersTableProps {
-  cryptoOrders: LessonsType[];
+  cryptoOrders: LessonsData[];
 }
 const RecentOrders: FC<RecentOrdersTableProps> = ({cryptoOrders}) =>{
 

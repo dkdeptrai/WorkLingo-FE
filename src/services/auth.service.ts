@@ -161,16 +161,21 @@ class AuthService {
     return [];
   }
 
+ 
+
+
   async getAllFlashcard(): Promise<FlashcardType[]> {
     try {
-      const response = axios.get(ALL_FLASHCARD_API, {
+      const response = await fetch(ALL_FLASHCARD_API, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
-      const data = await response.data;
+      const data = await response.json();
+
       if (data) {
         console.log("User details fetched successfully", data);
         return data;
@@ -184,15 +189,14 @@ class AuthService {
 
   async getAllLessons(): Promise<LessonsType[]> {
     try {
-      const response = await fetch(ALL_LESSONS_API, {
-        method: "GET",
+      const response = axios.get(ALL_LESSONS_API, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-
-      const data = await response.json();
+      console.log("response", (await response).data);
+      const data = (await response).data;
       if (data) {
         console.log("User details fetched successfully", data);
         return data;
