@@ -4,9 +4,10 @@ export interface UserType {
   id: string;
   // status: CryptoOrderStatus;
   firstname: string;
-  lastname: number;
+  lastname: string;
   email: string;
   jobTitle: string;
   avatarUrl: string;
-  bio: number;
+  bio: string;
+  role: string;
 }

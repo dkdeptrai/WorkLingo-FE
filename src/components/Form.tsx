@@ -1,17 +1,70 @@
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { UserType } from "../models/UserType";
+import axios from "axios";
+import userService from "../services/user.service";
 
-interface FormProps {
-  // onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+interface RecentOrdersTableProps {
+  userdata: UserType;
 }
 
-const Form: React.FC<FormProps> = () => {
-  const [name, setName] = React.useState("");
-  const handleSubmit = (event: any) => {
+const FormTopic: React.FC<RecentOrdersTableProps> = ({ userdata }) => {
+  const [firstName, setFirstName] = useState(userdata.firstname);
+  const [lastName, setLastName] = useState(userdata.lastname);
+  const [jobTitle, setJobTitle] = useState(userdata.jobTitle);
+  const [bio, setBio] = useState(userdata.bio);
+  const [email, setEmail] = useState(userdata.email);
+  const [avatarFile, setAvatarFile] = useState(null);
+
+  const handleImageChange = (e: any) => {
+    setAvatarFile(e.target.files[0]);
+    alert("Image uploaded successfully");
+  };
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    alert("hello" + name);
+    const userId = userdata.id;
+
+    const response = await fetch(
+      `http://localhost:8080/api/v1/users/${userId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          jobTitle,
+          bio,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      alert("User updated successfully");
+    } else {
+      alert("Failed to update user");
+    }
+    
+    if (avatarFile) {
+      try {
+        console.log("Selected image:", avatarFile);
+        const response = await userService.updateAvatar(
+          userdata.id,
+          avatarFile
+        );
+        if(response.ok) {
+          alert("Avatar updated successfully");
+        }
+      } catch (error) {
+        alert("Failed to update avatar");
+      }
+    }
   };
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-12">
@@ -27,24 +80,45 @@ const Form: React.FC<FormProps> = () => {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label
-                htmlFor="username"
+                htmlFor="firstname"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Username
+                First name
               </label>
               <div className="mt-2">
-                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                  <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-                    workcation.com/
-                  </span>
+                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                  <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm" />
                   <input
                     type="text"
-                    name="username"
-                    id="username"
+                    name="firstname"
+                    id="firstname"
                     autoComplete="username"
-                    onChange={(e) => setName(e.target.value)}
-                    className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="janesmith"
+                    onChange={(e) => setFirstName(e.target.value)}
+                    value={firstName}
+                    className="block flex-1 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="lastname"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Last name
+              </label>
+              <div className="mt-2">
+                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                  <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm" />
+                  <input
+                    type="text"
+                    name="lastname"
+                    id="lastname"
+                    autoComplete="username"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="block flex-1 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -61,9 +135,10 @@ const Form: React.FC<FormProps> = () => {
                 <textarea
                   id="about"
                   name="about"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                   rows={3}
                   className="block bg-white w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={""}
                 />
               </div>
               <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -74,14 +149,16 @@ const Form: React.FC<FormProps> = () => {
             <div className="col-span-full">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="username"
+                htmlFor="job title"
               >
-                Username
+                Job title
               </label>
               <input
                 className="shadow bg-white appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username"
+                id="job-title"
                 type="text"
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
                 placeholder="Username"
               />
             </div>
@@ -89,37 +166,18 @@ const Form: React.FC<FormProps> = () => {
             <div className="col-span-full">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="username"
+                htmlFor="email"
               >
-                Username
+                Email
               </label>
               <input
                 className="shadow bg-white appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username"
-                type="text"
-                placeholder="Username"
+                id="email"
+                value={email}
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
               />
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="photo"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Photo
-              </label>
-              <div className="mt-2 flex items-center gap-x-3">
-                <UserCircleIcon
-                  className="h-12 w-12 text-gray-300"
-                  aria-hidden="true"
-                />
-                <button
-                  type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  Change
-                </button>
-              </div>
             </div>
 
             <div className="col-span-full">
@@ -127,7 +185,7 @@ const Form: React.FC<FormProps> = () => {
                 htmlFor="cover-photo"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Cover photo
+                Avatar
               </label>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                 <div className="text-center">
@@ -137,15 +195,16 @@ const Form: React.FC<FormProps> = () => {
                   />
                   <div className="mt-4 flex text-sm leading-6 text-gray-600">
                     <label
-                      htmlFor="file-upload"
+                      htmlFor="imageFile"
                       className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                     >
                       <span>Upload a file</span>
                       <input
-                        id="file-upload"
-                        name="file-upload"
+                        id="imageFile"
+                        name="imageFile"
                         type="file"
                         className="sr-only"
+                        onChange={handleImageChange}
                       />
                     </label>
                     <p className="pl-1">or drag and drop</p>
@@ -471,4 +530,4 @@ const Form: React.FC<FormProps> = () => {
   );
 };
 
-export default Form;
+export default FormTopic;

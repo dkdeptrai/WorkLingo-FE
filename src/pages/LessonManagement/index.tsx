@@ -7,16 +7,18 @@ import { UserType, CryptoOrderStatus } from '../../models/UserType';
 import RecentOrders from "./RecentOrders";
 import { FC, useEffect, useState } from "react";
 import authService from "../../services/auth.service";
+import { TopicType } from "../../models/TopicType";
+import { LessonsType } from "../../models/LessonsType";
 
 
 const ApplicationsTransactions:FC = () =>{
-  const [userData, setUserData] = useState<UserType[]>([]);
+  const [userData, setUserData] = useState<LessonsType[]>([]);
   useEffect(() => {
     const fetchUserDetails = async () => {
-      let response: UserType[] = []; 
-      response = await authService.getUserDetails();
-      console.log("user data", response);
-      setUserData(response);
+      let response: LessonsType[] = []; 
+      response = await authService.getAllLessons();
+      console.log("user data", response.results);
+      setUserData(response.results);
     }
 
     fetchUserDetails();
@@ -24,7 +26,7 @@ const ApplicationsTransactions:FC = () =>{
   return (
     <>
       <Helmet>
-        <title>Users Management</title>
+        <title>Lessons Management</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader userdata={userData}/>
