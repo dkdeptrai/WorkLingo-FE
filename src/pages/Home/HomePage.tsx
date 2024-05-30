@@ -72,7 +72,7 @@ const HomePage: React.FC = () => {
     try {
       console.log("user", user);
       if (user) {
-        const response = await userService.getLessonsByUser(
+        const response = await userService.getFavoriteLessons(
           user.id,
           paginationModel.page,
           paginationModel.size

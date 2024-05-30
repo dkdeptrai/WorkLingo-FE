@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import LessonComponent from "./components/LessonComponent";
 import FavoriteIcon from "./assets/icons/favorite.svg?react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashCardAnswer from "./components/FlashCardAnswer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import lessonsService from "./services/lessons.service";
+import React, { useEffect, useState } from "react";
 import topicsService from "./services/topics.service";
 import userService from "./services/user.service";
 import DefaultUserIcon from "./assets/icons/default_user_icon.svg?react";
@@ -12,6 +12,8 @@ import UpvoteIcon from "./assets/icons/upvote_icon.svg?react";
 import DownvoteIcon from "./assets/icons/downvote_icon.svg?react";
 import ratingsService from "./services/ratings.service";
 import { useAuth } from "./contexts/AuthContext";
+import { UsersIcon } from "@heroicons/react/24/solid";
+import { add } from "date-fns";
 interface FlashcardLearningProps {
   // Define your component props here
 }
@@ -23,6 +25,7 @@ interface flashcard {
 }
 
 const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
+  const navigate = useNavigate();
   const lessonId = useParams<{ id: string }>().id;
   const [lesson, setLesson] = useState();
   const [topic, setTopic] = useState(null);
@@ -34,6 +37,7 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   const [vote, setVote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [favorite, setFavorite] = useState(false);
   const { user } = useAuth();
 
   const fetchFlashcard = async () => {
@@ -70,8 +74,23 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
     }
   };
 
+  const handleCreateQuiz = async () => {
+    console.log("hello");
+    navigate(`/quiz/${lessonId}`);
+  };
+
   const toggleAnswers = () => {
     setShowAnswers(!showAnswers);
+  };
+
+  const addToFavorite = async () => {
+    try {
+      await userService.addFavoriteLesson(lesson.id);
+      setFavorite(true);
+    } catch (error) {
+      console.error("Error adding lesson to favorites: ", error);
+      throw error;
+    }
   };
 
   const handleUpvote = async () => {
@@ -147,6 +166,7 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
   }, [lessons]);
 
   useEffect(() => {
+    setFavorite(false);
     fetchFlashcard();
   }, [lessonId]);
 
@@ -165,15 +185,30 @@ const FlashcardLearning: React.FC<FlashcardLearningProps> = () => {
           <div className="text-secondary-text-color text-sm font-bold my-2">
             TOPIC
           </div>
-          <div className="bg-text-padding-color px-3 py-1 rounded-[3px]">
-            {topic ? topic.name : ""}
+          <div>
+            <div className="w-full bg-text-padding-color px-3 py-1 rounded-[3px]">
+              {topic ? topic.name : ""}
+            </div>
           </div>
           <div className="w-full flex flex-row gap-12 items-center my-6 ">
             <div className="text-3xl font-semibold">
               {lesson ? lesson.title : ""}
             </div>
+            <button
+              className="bg-light-blue-color font-semi-bold p-2 rounded mt-2"
+              onClick={handleCreateQuiz}
+            >
+              Create quiz
+            </button>
             <button className="bg-transparent text-primary-color ml-auto px-4 py-1 rounded-md">
-              <FavoriteIcon className="w-6 h-6" />
+              <FavoriteIcon
+                className="w-6 h-6"
+                fill={favorite ? "yellow" : "white"}
+                onClick={() => {
+                  addToFavorite();
+                  setFavorite(!favorite);
+                }}
+              />
             </button>
           </div>{" "}
           <div className="w-full h-auto items-center">

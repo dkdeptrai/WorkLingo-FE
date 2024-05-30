@@ -1,7 +1,5 @@
 // src/services/auth.service.ts
 
-import { errors } from "web3";
-
 const API_URL = "http://localhost:8080/api/v1/topics";
 class TopicsService {
   async getTopics(page: number, pageSize: number) {

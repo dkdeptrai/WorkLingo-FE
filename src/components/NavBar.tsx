@@ -63,7 +63,7 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
             navigate("/");
           }}
         />
-        {user?.role === "admin" ? (
+        {user?.role === "ADMIN" ? (
           <>
             <Link to="/manager/users">Users</Link>
             <Link to="/manager/flashcards">Flascards</Link>
@@ -74,6 +74,7 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
           <>
             <Link to="/homepage">Home</Link>
             <Link to="/user/lessons">Your Lessons</Link>
+            <Link to="/quiz">Quiz</Link>
           </>
         )}
       </div>

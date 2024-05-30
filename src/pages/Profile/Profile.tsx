@@ -100,19 +100,21 @@ const Profile: React.FC<ProfileProps> = () => {
   };
   const handleProfileChange = async () => {
     console.log("handle profile change", user.id);
-    const profile = {
-      firstName: firstname,
-      lastName: lastname,
-      email: email,
-      bio: bio,
-    };
-    const responseBody = JSON.stringify(profile);
+    try {
+      const profile = {
+        firstName: firstname,
+        lastName: lastname,
+        email: email,
+        bio: bio,
+      };
+      const responseBody = JSON.stringify(profile);
 
-    const response = await userService.updateProfile(user.id, responseBody);
-    if (!response.ok) {
-      throw new Error("Failed to update profile");
+      const response = await userService.updateProfile(user.id, responseBody);
+      alert("Profile updated successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to update profile");
     }
-    alert("Profile updated successfully");
   };
 
   const handleAvatarChange = async () => {
@@ -123,11 +125,9 @@ const Profile: React.FC<ProfileProps> = () => {
       }
       console.log("Selected image:", selectedImage);
       const response = await userService.updateAvatar(user.id, selectedImage);
-      if (!response.ok) {
-        throw new Error("Failed to update avatar");
-      }
       alert("Avatar updated successfully");
     } catch (error) {
+      console.log(error);
       alert("Failed to update avatar");
     }
   };

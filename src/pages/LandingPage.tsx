@@ -8,6 +8,7 @@ import Flickity from "react-flickity-component";
 import "../flickity.css";
 import TopicComponent from "../components/TopicComponent";
 import topicsService from "../services/topics.service";
+import { useNavigate } from "react-router-dom";
 
 const flickityOptions = {
   initialIndex: 1,
@@ -16,6 +17,7 @@ const flickityOptions = {
 
 const LandingPage: React.FC = () => {
   const [topics, setTopics] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchTopics = async () => {
       try {
@@ -27,6 +29,11 @@ const LandingPage: React.FC = () => {
     };
     fetchTopics();
   }, []);
+
+  const handleClick = () => {
+    console.log("@@@@");
+    navigate("/homepage");
+  };
 
   return (
     <div className="w-full bg-[url('./assets/icons/background-pattern.png')] object-fill flex flex-col gap-20 relative z-1">
@@ -40,7 +47,11 @@ const LandingPage: React.FC = () => {
           hợp với bản thân. Tiếng Anh giúp mở rộng cơ hội nghề nghiệp trong
           tương lai.
         </div>
-        <button className="bg-primary-color px-8 py-4 rounded-[96px] font-medium text-1xl text-white">
+        <button
+          className="bg-primary-color px-8 py-4 rounded-[96px] font-medium text-1xl text-white"
+          onClick={handleClick}
+          style={{ cursor: "pointer" }}
+        >
           Khám phá ngay
         </button>
       </div>
@@ -80,39 +91,40 @@ const LandingPage: React.FC = () => {
       <div className="reviews mx-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-light-blue-color flex flex-col gap-3 items-center p-6 rounded-[12px]">
-            <div className="text-secondary-text-color text-base">HỌC VIÊN</div>
+            <div className="text-secondary-text-color text-base">LEARNER</div>
             <div className="text-primary-text-color text-2xl font-medium">
-              Nguyễn Văn A
+              Nguyễn Văn An
             </div>
             <div className="text-primary-text-color">
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. "
+              "Worklingo giúp tôi nâng cao khả năng tiếng Anh của mình một cách
+              hiệu quả. Trải nghiệm học tập tuyệt vời!"
             </div>
           </div>
           <div className="bg-light-blue-color flex flex-col gap-3 items-center p-6 rounded-[12px]">
-            <div className="text-secondary-text-color text-base">HỌC VIÊN</div>
+            <div className="text-secondary-text-color text-base">LEARNER</div>
             <div className="text-primary-text-color text-2xl font-medium">
-              Nguyễn Văn A
+              Trần Quốc Việt
             </div>
             <div className="text-primary-text-color">
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. "
+              "WorkLingo thật sự là một trang web tuyệt vời để học tiếng Anh.
+              Tôi đã có cơ hội sử dụng nó và thực sự ấn tượng với chất lượng của
+              các khóa học. Các bài học được thiết kế một cách thông minh và
+              linh hoạt, giúp tôi nâng cao khả năng giao tiếp của mình một cách
+              hiệu quả. Cảm ơn WorkLingo!"
             </div>
           </div>
           <div className="bg-light-blue-color flex flex-col gap-3 items-center p-6 rounded-[12px]">
-            <div className="text-secondary-text-color text-base">HỌC VIÊN</div>
+            <div className="text-secondary-text-color text-base">LEARNER</div>
             <div className="text-primary-text-color text-2xl font-medium">
-              Nguyễn Văn A
+              Lê Hữu Khánh
             </div>
             <div className="text-primary-text-color">
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. "
+              "WorkLingo không chỉ là một trang web học tiếng Anh thông thường,
+              mà còn là một cộng đồng chia sẻ kiến thức và kinh nghiệm. Tôi đã
+              có cơ hội kết nối với những người học khác và chia sẻ cùng họ
+              những trải nghiệm học tập. Điều này thực sự là một phần quan trọng
+              của quá trình học của tôi. Cảm ơn WorkLingo vì đã tạo ra một môi
+              trường học tập tuyệt vời như vậy"
             </div>
           </div>
         </div>

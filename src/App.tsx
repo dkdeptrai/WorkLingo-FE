@@ -19,6 +19,7 @@ import ThemeProvider from "./theme/ThemeProvider";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import { dividerClasses } from "@mui/material";
 import YourLessonsPage from "./pages/YourLessonsPage";
+import QuizComponent from "./components/QuizComponent";
 
 function App() {
   return (
@@ -33,7 +34,15 @@ function App() {
                 </div>
                 <Routes>
                   <Route path="/login" element={<Authentication />} />
-                  <Route path="/homepage" element={<HomePage />} />
+                  <Route path="/quiz/:lesson_id" element={<QuizComponent />} />
+                  <Route
+                    path="/homepage"
+                    element={
+                      <ProtectedRoute>
+                        <HomePage />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/" element={<LandingPage />} />
                   <Route
                     path="/topics"

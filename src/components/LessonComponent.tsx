@@ -5,6 +5,7 @@ import DefaultUserIcon from "../assets/icons/default_user_icon.svg?react";
 import UpvoteIcon from "../assets/icons/upvote_icon.svg?react";
 import DownvoteIcon from "../assets/icons/downvote_icon.svg?react";
 import { set } from "date-fns";
+import lessonsService from "../services/lessons.service";
 
 interface Props {
   lesson: any;
@@ -15,8 +16,8 @@ const LessonComponent: React.FC<Props> = ({ lesson: lesson }) => {
   const [author, SetAuthor] = useState(null);
   const [upvotes, setUpvotes] = useState();
   const [downvotes, setDownvotes] = useState();
-  const [vote, setVote] = useState("");
   const handleClick = () => {
+    lessonsService.addToRecent(lesson.id);
     navigate(`/lessons/${lesson.id}`);
   };
 
