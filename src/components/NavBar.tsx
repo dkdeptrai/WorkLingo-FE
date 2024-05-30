@@ -74,7 +74,6 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
           <>
             <Link to="/homepage">Home</Link>
             <Link to="/user/lessons">Your Lessons</Link>
-            <Link to="/quiz">Quiz</Link>
           </>
         )}
       </div>
