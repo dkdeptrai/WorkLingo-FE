@@ -5,13 +5,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Form from "../../components/Form";
-function PageHeader() {
-  const user = {
-    name: "Catherine Pike",
-    avatar: "/static/images/avatars/1.jpg",
-  };
+import { UserType } from "../../models/UserType";
+interface RecentOrdersTableProps {
+  userdata: UserType[];
+}
+const PageHeader: FC<RecentOrdersTableProps> = ({ userdata }: { userdata: UserType[] }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -27,10 +27,10 @@ function PageHeader() {
           User Management
         </Typography>
         <Typography variant="subtitle2">
-          {user.name}, these are your users
+          Hello, these are your users
         </Typography>
       </Grid>
-      <Grid item>
+      {/* <Grid item>
         <Button
           sx={{ mt: { xs: 2, md: 0 } }}
           variant="contained"
@@ -46,8 +46,8 @@ function PageHeader() {
         >
           <DialogTitle id="form-dialog-title">Create user</DialogTitle>
           <DialogContent>
-            <Form />
-          </DialogContent>
+            <Form userdata={userdata}/>
+          </DialogContent> */}
           {/* <DialogActions>
             <Button onClick={handleClose} color="primary">
               Cancel
@@ -56,8 +56,8 @@ function PageHeader() {
               Create
             </Button>
           </DialogActions> */}
-        </Dialog>
-      </Grid>
+        {/* </Dialog>
+      </Grid> */}
     </Grid>
   );
 }

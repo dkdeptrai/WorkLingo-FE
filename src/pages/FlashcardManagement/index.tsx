@@ -7,15 +7,16 @@ import { UserType, CryptoOrderStatus } from '../../models/UserType';
 import RecentOrders from "./RecentOrders";
 import { FC, useEffect, useState } from "react";
 import authService from "../../services/auth.service";
+import { FlashcardType } from "../../models/FlascardType";
 
 
 const ApplicationsTransactions:FC = () =>{
-  const [userData, setUserData] = useState<UserType[]>([]);
+  const [userData, setUserData] = useState<FlashcardType[]>([]);
   useEffect(() => {
     const fetchUserDetails = async () => {
-      let response: UserType[] = []; 
-      response = await authService.getUserDetails();
-      console.log("user data", response);
+      let response: FlashcardType[] = []; 
+      response = await authService.getAllFlashcard();
+      console.log("flashcard", response);
       setUserData(response);
     }
 
@@ -24,7 +25,7 @@ const ApplicationsTransactions:FC = () =>{
   return (
     <>
       <Helmet>
-        <title>Users Management</title>
+        <title>FLashcard Management</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader userdata={userData}/>

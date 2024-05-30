@@ -1,40 +1,42 @@
-import { FC, ChangeEvent, useState } from 'react';
-import { format } from 'date-fns';
-import numeral from 'numeral';
-import PropTypes from 'prop-types';
-import { SelectChangeEvent } from '@mui/material/Select';
 import {
-  Tooltip,
-  Divider,
   Box,
-  FormControl,
-  InputLabel,
+  Button,
   Card,
+  CardHeader,
   Checkbox,
+  Dialog,
+  Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
-  TableContainer,
-  Select,
-  MenuItem,
+  Tooltip,
   Typography,
   useTheme,
-  CardHeader
-} from '@mui/material';
-
-import Label from '../../components/Label/index';
-import { CryptoOrder, CryptoOrderStatus } from '../../models/UserType';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import BulkActions from './BulkActions';
+} from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
+import PropTypes from "prop-types";
+import { ChangeEvent, FC, useState } from "react";
+import DialogContent from "@mui/material/DialogContent";
+import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
+import Label from "../../components/Label/index";
+import { CryptoOrderStatus } from "../../models/UserType";
+import BulkActions from "./BulkActions";
+import userService from "../../services/user.service";
+import { LessonsType } from "../../models/LessonsType";
+import FormLessons from "../../components/FormLessons";
 
 interface RecentOrdersTableProps {
-  className?: string;
-  cryptoOrders: CryptoOrder[];
+  cryptoOrders: LessonsType[];
 }
 
 interface Filters {
@@ -44,17 +46,17 @@ interface Filters {
 const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
   const map = {
     failed: {
-      text: 'Failed',
-      color: 'error'
+      text: "Failed",
+      color: "error",
     },
     completed: {
-      text: 'Completed',
-      color: 'success'
+      text: "Completed",
+      color: "success",
     },
     pending: {
-      text: 'Pending',
-      color: 'warning'
-    }
+      text: "Pending",
+      color: "warning",
+    },
   };
 
   const { text, color }: any = map[cryptoOrderStatus];
@@ -63,13 +65,18 @@ const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
 };
 
 const applyFilters = (
-  cryptoOrders: CryptoOrder[],
+  cryptoOrders: LessonsType[],
   filters: Filters
-): CryptoOrder[] => {
+): LessonsType[] => {
+  if (!Array.isArray(cryptoOrders)) {
+    console.error("Invalid argument: cryptoOrders should be an array");
+    return [];
+  }
+
   return cryptoOrders.filter((cryptoOrder) => {
     let matches = true;
 
-    if (filters.status && cryptoOrder.status !== filters.status) {
+    if (filters.status) {
       matches = false;
     }
 
@@ -78,10 +85,10 @@ const applyFilters = (
 };
 
 const applyPagination = (
-  cryptoOrders: CryptoOrder[],
+  cryptoOrders: LessonsType[],
   page: number,
   limit: number
-): CryptoOrder[] => {
+): LessonsType[] => {
   return cryptoOrders.slice(page * limit, page * limit + limit);
 };
 
@@ -93,40 +100,54 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
   const [filters, setFilters] = useState<Filters>({
-    status: null
+    status: null,
   });
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const statusOptions = [
     {
-      id: 'all',
-      name: 'All'
+      id: "all",
+      name: "All",
     },
     {
-      id: 'completed',
-      name: 'Completed'
+      id: "completed",
+      name: "Completed",
     },
     {
-      id: 'pending',
-      name: 'Pending'
+      id: "pending",
+      name: "Pending",
     },
     {
-      id: 'failed',
-      name: 'Failed'
-    }
+      id: "failed",
+      name: "Failed",
+    },
   ];
+  const [open, setOpen] = useState(false);
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+  };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = (id) => {
+    userService.deleteLesson(id);
+    window.location.reload();
+    setOpen(false);
+  };
+  const handleStatusChange = (
+    e: SelectChangeEvent<CryptoOrderStatus | "all">
+  ): void => {
+    let value: CryptoOrderStatus | null = null;
 
-const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): void => {
-  let value: CryptoOrderStatus | null = null;
+    if (e.target.value !== "all") {
+      value = e.target.value as CryptoOrderStatus;
+    }
 
-  if (e.target.value !== 'all') {
-    value = e.target.value as CryptoOrderStatus;
-  }
-
-  setFilters((prevFilters: Filters) => {
-    const newStatus: CryptoOrderStatus | null = value;
-    return { ...prevFilters, status: newStatus };
-  });
-};
+    setFilters((prevFilters: Filters) => {
+      const newStatus: CryptoOrderStatus | null = value;
+      return { ...prevFilters, status: newStatus };
+    });
+  };
 
   const handleSelectAllCryptoOrders = (
     event: ChangeEvent<HTMLInputElement>
@@ -145,7 +166,7 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
     if (!selectedCryptoOrders.includes(cryptoOrderId)) {
       setSelectedCryptoOrders((prevSelected) => [
         ...prevSelected,
-        cryptoOrderId
+        cryptoOrderId,
       ]);
     } else {
       setSelectedCryptoOrders((prevSelected) =>
@@ -163,11 +184,7 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
   };
 
   const filteredCryptoOrders = applyFilters(cryptoOrders, filters);
-  const paginatedCryptoOrders = applyPagination(
-    filteredCryptoOrders,
-    page,
-    limit
-  );
+  const userPagination = applyPagination(filteredCryptoOrders, page, limit);
   const selectedSomeCryptoOrders =
     selectedCryptoOrders.length > 0 &&
     selectedCryptoOrders.length < cryptoOrders.length;
@@ -189,7 +206,7 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Status</InputLabel>
                 <Select
-                  value={filters.status || 'all'}
+                  value={filters.status || "all"}
                   onChange={handleStatusChange}
                   label="Status"
                   autoWidth
@@ -219,23 +236,23 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                   onChange={handleSelectAllCryptoOrders}
                 />
               </TableCell>
-              <TableCell>FLashcards Details</TableCell>
-              <TableCell>User ID</TableCell>
-              <TableCell>Source</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Topic</TableCell>
+              <TableCell>Image</TableCell>
+              <TableCell>Number of upvote</TableCell>
+              <TableCell>Number of downvote</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedCryptoOrders.map((cryptoOrder) => {
+            {userPagination.map((userdata) => {
               const isCryptoOrderSelected = selectedCryptoOrders.includes(
-                cryptoOrder.id
+                userdata.id
               );
               return (
                 <TableRow
                   hover
-                  key={cryptoOrder.id}
+                  key={userdata.id}
                   selected={isCryptoOrderSelected}
                 >
                   <TableCell padding="checkbox">
@@ -243,7 +260,7 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                       color="primary"
                       checked={isCryptoOrderSelected}
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleSelectOneCryptoOrder(event, cryptoOrder.id)
+                        handleSelectOneCryptoOrder(event, userdata.id)
                       }
                       value={isCryptoOrderSelected}
                     />
@@ -256,10 +273,53 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderDetails}
+                      {userdata.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {format(cryptoOrder.orderDate, 'MMMM dd yyyy')}
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {format(cryptoOrder.email, 'MMMM dd yyyy')}
+                    </Typography> */}
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {userdata.topic}
+                    </Typography>
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {format(cryptoOrder.email, 'MMMM dd yyyy')}
+                    </Typography> */}
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      <img
+                        src={userdata.topic}
+                        alt="avatar"
+                        className="w-8 h-8"
+                      />
+                    </Typography>
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {cryptoOrder.email}
+                    </Typography> */}
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {userdata.numberOfUpVotes}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -270,51 +330,18 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderID}
+                      {userdata.numberOfDownVotes}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {cryptoOrder.sourceName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {cryptoOrder.sourceDesc}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {cryptoOrder.amountCrypto}
-                      {cryptoOrder.cryptoCurrency}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {numeral(cryptoOrder.amount).format(
-                        `${cryptoOrder.currency}0,0.00`
-                      )}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    {getStatusLabel(cryptoOrder.status)}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Edit Order" arrow>
+                    <Tooltip title="Edit Topic" arrow>
                       <IconButton
+                        onClick={handleClickOpen}
                         sx={{
-                          '&:hover': {
+                          "&:hover": {
                             // background: theme.colors.primary.lighter
                           },
-                          color: theme.palette.primary.main
+                          color: theme.palette.primary.main,
                         }}
                         color="inherit"
                         size="small"
@@ -322,13 +349,23 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                         <EditTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="form-dialog-title"
+                    >
+                      <DialogContent>
+                        <FormLessons userdata={userdata} />
+                      </DialogContent>
+                    </Dialog>
                     <Tooltip title="Delete Order" arrow>
                       <IconButton
+                        onClick={() => setDeleteOpen(true)}
                         sx={{
-                          '&:hover': { 
+                          "&:hover": {
                             // background: theme.colors.error.lighter
-                           },
-                          color: theme.palette.error.main
+                          },
+                          color: theme.palette.error.main,
                         }}
                         color="inherit"
                         size="small"
@@ -336,6 +373,30 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
                         <DeleteTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
+                    <Dialog
+                      open={deleteOpen}
+                      onClose={handleDeleteClose}
+                      aria-labelledby="delete-dialog-title"
+                    >
+                      <DialogContent id="delete-dialog-title">
+                        Delete Order
+                      </DialogContent>
+                      <DialogContent>
+                        Are you sure you want to delete this order?
+                      </DialogContent>
+                      <DialogContent>
+                        <Button onClick={handleDeleteClose} color="primary">
+                          No
+                        </Button>
+                        <Button
+                          onClick={() => handleClose(userdata.id)}
+                          color="primary"
+                          autoFocus
+                        >
+                          Yes
+                        </Button>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               );
@@ -359,11 +420,11 @@ const handleStatusChange = (e: SelectChangeEvent<CryptoOrderStatus | 'all'>): vo
 };
 
 RecentOrdersTable.propTypes = {
-  cryptoOrders: PropTypes.array.isRequired
+  cryptoOrders: PropTypes.array.isRequired,
 };
 
 RecentOrdersTable.defaultProps = {
-  cryptoOrders: []
+  cryptoOrders: [],
 };
 
 export default RecentOrdersTable;

@@ -5,13 +5,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import React, { useState } from "react";
-import Form from "../../components/Form";
-function PageHeader() {
-  const user = {
-    name: "Catherine Pike",
-    avatar: "/static/images/avatars/1.jpg",
-  };
+import React, { FC, useState } from "react";
+import { TopicType } from "../../models/TopicType";
+import FormTopic from "../../components/FormTopic";
+import CreateTopic from "../../components/CreateTopic";
+interface RecentOrdersTableProps {
+  userdata: TopicType[];
+}
+const PageHeader: FC<RecentOrdersTableProps> = ({ userdata }: { userdata: TopicType[] }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -19,29 +20,15 @@ function PageHeader() {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-
-    // Get form data...
-    // const formData = new FormData(event.target);
-    // const data = Object.fromEntries(formData.entries());
-
-    // Process data...
-    // console.log(data);
-
-    alert("User created successfully!");
-
-    // Close the dialog
-    handleClose();
-  };
+  
   return (
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
         <Typography variant="h3" component="h3" gutterBottom>
-          Lessons Management
+          Topic Management
         </Typography>
         <Typography variant="subtitle2">
-          {user.name}, these are the lessons management
+          Hello, these are your topic
         </Typography>
       </Grid>
       <Grid item>
@@ -51,25 +38,24 @@ function PageHeader() {
           startIcon={<AddTwoToneIcon fontSize="small" />}
           onClick={handleClickOpen}
         >
-          Create lesson
+          Create Topic
         </Button>
         <Dialog
           open={open}
           onClose={handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Create lesson</DialogTitle>
           <DialogContent>
-            <Form/>
-          </DialogContent>
-          <DialogActions>
+            <CreateTopic />
+          </DialogContent> 
+           {/* <DialogActions>
             <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
             <Button onClick={handleSubmit} color="primary">
               Create
             </Button>
-          </DialogActions>
+          </DialogActions> */}
         </Dialog>
       </Grid>
     </Grid>

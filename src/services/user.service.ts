@@ -1,6 +1,101 @@
+import axios from "axios";
+import { LessonsType } from "../models/LessonsType";
+
 const API_URL = "http://localhost:8080/api/v1/users";
+const TOPIC_API_URL = "http://localhost:8080/api/v1/topics";
+const ALL_LESSONS_API = "http://localhost:8080/api/v1/lessons";
+const ALL_FLASHCARD_API = "http://localhost:8080/api/v1/flashcards";
 
 class UserService {
+  async updateLessons(topicId: number, formData: FormData) {
+    try {
+      const response = axios.put(`${ALL_LESSONS_API}/${topicId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Topic update failed:", error);
+      throw error;
+    }
+  }
+
+  async updateTopic(topicId: number, formData: FormData) {
+    try {
+      const response = await axios.patch(`${TOPIC_API_URL}/${topicId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      window.location.reload();
+      return response.data;
+    } catch (error) {
+      console.error("Failed to update topic", error);
+      throw error;
+    }
+  }
+
+  async deleteTopic(topicId: number) {
+    try {
+      const response = await axios.delete(`${TOPIC_API_URL}/${topicId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to delete topic", error);
+      throw error;
+    }
+  }
+
+  async deleteFlashcard(topicId: number) {
+    try {
+      const response = await axios.delete(`${ALL_FLASHCARD_API}/${topicId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to delete topic", error);
+      throw error;
+    }
+  }
+
+  async deleteLesson(topicId: number) {
+    try {
+      const response = await axios.delete(`${ALL_LESSONS_API}/${topicId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to delete topic", error);
+      throw error;
+    }
+  }
+
+  async addTopic( formData: FormData) {
+    try {
+      const response = await axios.post(`${TOPIC_API_URL}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+          "Accept": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to update topic", error);
+      throw error;
+    }
+  }
+
   async getUser(userId: string) {
     try {
       const response = await fetch(`${API_URL}/${userId}`, {
