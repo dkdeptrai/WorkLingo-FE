@@ -12,6 +12,7 @@ class LessonsService {
         },
       });
       const data = await response.json();
+      console.log("flashcards", data);
       return data;
     } catch (error) {
       console.error("Error fetching flashcards: ", error);
@@ -104,6 +105,42 @@ class LessonsService {
       return data;
     } catch (error) {
       console.error("Error fetching lessons: ", error);
+      throw error;
+    }
+  }
+  async getTopLessons() {
+    try {
+      const response = await fetch(`${API_URL}/top-rating?page=0&size=5`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching top lessons: ", error);
+      throw error;
+    }
+  }
+  async addToRecent(lessonId: string) {
+    try {
+      const user = JSON.parse(localStorage.getItem("user")!);
+      await fetch(`${API_URL}/recent`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          lessonId: lessonId,
+          lastAccessed: new Date().toISOString(),
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to add recent lesson", error);
       throw error;
     }
   }

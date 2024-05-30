@@ -9,8 +9,8 @@ const Authentication: React.FC = () => {
       <div className="flex flex-col items-center justify-center flex-grow ">
         <Logo></Logo>
         <div>
-          Ant Design is the most influential web design specification in Xihu
-          district
+          Worklingo is a platform that helps you learn English through flashcard
+          and quizs.
         </div>
         <div className="mt-16">
           <AuthenticationForm />

@@ -2,6 +2,10 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import userService from "../services/user.service";
 import DefaultUserIcon from "../assets/icons/default_user_icon.svg?react";
+import UpvoteIcon from "../assets/icons/upvote_icon.svg?react";
+import DownvoteIcon from "../assets/icons/downvote_icon.svg?react";
+import { set } from "date-fns";
+import lessonsService from "../services/lessons.service";
 
 interface Props {
   lesson: any;
@@ -10,8 +14,10 @@ interface Props {
 const LessonComponent: React.FC<Props> = ({ lesson: lesson }) => {
   const navigate = useNavigate();
   const [author, SetAuthor] = useState(null);
-
+  const [upvotes, setUpvotes] = useState();
+  const [downvotes, setDownvotes] = useState();
   const handleClick = () => {
+    lessonsService.addToRecent(lesson.id);
     navigate(`/lessons/${lesson.id}`);
   };
 
@@ -22,12 +28,14 @@ const LessonComponent: React.FC<Props> = ({ lesson: lesson }) => {
 
   useEffect(() => {
     fetchAuthor();
+    setUpvotes(lesson.numberOfUpVotes);
+    setDownvotes(lesson.numberOfDownVotes);
   }, []);
 
   return (
     author && (
       <div
-        className="w-full flex flex-col gap-4 items-start font-semibold bg-dark-blue-color p-4 rounded-[16px]"
+        className="w-full h-[200px] flex flex-col gap-4 items-start font-semibold bg-dark-blue-color p-4 rounded-[16px]"
         onClick={handleClick}
       >
         <div className="text-white ">{lesson.title}</div>
@@ -35,7 +43,18 @@ const LessonComponent: React.FC<Props> = ({ lesson: lesson }) => {
           <div className="bg-white px-[8px] py-[2px] rounded-[200px]">
             {lesson.numberOfFlashcards} Cards
           </div>
-          <div className="text-white">⭐ 5.0 (100 ratings)</div>
+          <div className="flex flex-row gap-4 items-center ml-auto">
+            <UpvoteIcon
+              fill="white"
+              className="w-6 h-6 bg-transparent text-primary-color"
+            />
+            <div className="text-white text-base">{upvotes}</div>
+            <DownvoteIcon
+              fill="white"
+              className="w-6 h-6 bg-transparent text-primary-color"
+            />
+            <div className="text-white text-base">{downvotes}</div>
+          </div>
         </div>
         <div className="text-xs flex flex-row mt-8 items-center">
           {author.avatarUrl ? (

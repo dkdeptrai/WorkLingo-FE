@@ -132,6 +132,27 @@ class UserService {
       console.error("Failed to update avatar", error);
     }
   }
+
+  async getLessonsByUser(userId: number, page = 0, size = 10) {
+    try {
+      const response = await fetch(
+        `${API_URL}/${userId}/lessons?page=${page}&size=${size}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.error("Failed to get lessons by user", error);
+      throw error;
+    }
+  }
   async getFavoriteLessons(userId: string, page: number, size: number) {
     try {
       const response = await fetch(
@@ -139,7 +160,8 @@ class UserService {
         {
           method: "GET",
           headers: {
-            contentType: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
@@ -150,8 +172,9 @@ class UserService {
       throw error;
     }
   }
-  async addFavoriteLesson(userId: number, lessonId: number) {
+  async addFavoriteLesson(lessonId: number) {
     try {
+      const userId = JSON.parse(localStorage.getItem("user")!).id;
       const response = await fetch(
         `${API_URL}/${userId}/favorites?lessonId=${lessonId}`,
         {
@@ -193,24 +216,6 @@ class UserService {
       return data;
     } catch (error) {
       console.error("Failed to delete favorite lesson", error);
-      throw error;
-    }
-  }
-
-  async getLessonsByUser(userId: number) {
-    try {
-      const response = await fetch(`${API_URL}/${userId}/lessons`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Failed to get lessons by user", error);
       throw error;
     }
   }

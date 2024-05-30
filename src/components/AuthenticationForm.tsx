@@ -7,6 +7,7 @@ import GoogleIcon from "../assets/icons/google.svg?react";
 import { Tab, initTWE } from "tw-elements";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { set } from "date-fns";
 
 initTWE({ Tab });
 const AuthenticationForm: React.FC = () => {
@@ -15,6 +16,7 @@ const AuthenticationForm: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { from } = location.state || { from: { pathname: "/" } };
+  const [error, setError] = useState("");
   // login states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -23,36 +25,53 @@ const AuthenticationForm: React.FC = () => {
 
   // sign up states
   const [confirmPassword, setConfirmPassword] = useState("");
+  const handleError = (error: any) => {
+    setError(error || "An error occurred");
+  };
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!email || !password) {
+      handleError("Please fill in all fields!");
+      return;
+    }
     try {
       const token = await AuthService.login(email, password);
       setAccessToken(token!);
       navigate(from.pathname, { replace: true });
     } catch (error) {
       console.error("Login failed", error);
+      handleError("Invalid email or password, please try again!");
     }
   };
 
   const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      handleError("Please fill in all fields!");
       return;
     }
-    const token = await AuthService.register(
-      firstName,
-      lastName,
-      email,
-      password
-    );
-    setAccessToken(token!);
-    navigate(from.pathname, { replace: true });
+    if (password !== confirmPassword) {
+      handleError("Passwords do not match");
+      return;
+    }
+    try {
+      const token = await AuthService.register(
+        firstName,
+        lastName,
+        email,
+        password
+      );
+      setAccessToken(token!);
+      navigate(from.pathname, { replace: true });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   return (
     <div className="">
+      <div className="text-red-500">{error.length > 0 ? error : ""}</div>
       <ul
         className="mb-5 flex list-none flex-row flex-wrap border-b-0 ps-0"
         role="tablist"
@@ -139,10 +158,10 @@ const AuthenticationForm: React.FC = () => {
               >
                 Sign In
               </button>
-              <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
+              {/* <div className="flex flex-row items-center justify-center gap-x-4 bg-white text-primary-text-color border border-1 border-primary-border-color py-2">
                 <GoogleIcon />
                 <span>Sign in with Google</span>
-              </div>
+              </div> */}
               <div>
                 Don't have an account?{" "}
                 <a href="#tabs-sign-up" onClick={() => setActiveTab("SignUp")}>
